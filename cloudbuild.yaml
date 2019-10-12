@@ -1,0 +1,19 @@
+steps:
+  - name: "node:10.16.3"
+    id: root-install
+    entrypoint: npm
+    args: ["install"]
+
+  # Validate build
+  - name: "node:10.16.3"
+    id: lint
+    entrypoint: npm
+    args: ["run", "lint"]
+
+  - name: "node:10.16.3"
+    id: test-unit
+    entrypoint: npm
+    args: ["run", "test"]
+
+images:
+  - "gcr.io/sweng-581-capstone/"

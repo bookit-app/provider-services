@@ -1,6 +1,7 @@
 'use strict';
 
-const { errors, ErrorHandler } = require('../../../lib/util/error-handler');
+const { errors } = require('../constants');
+const { ErrorHandler } = require('../../../lib/util/error-handler');
 const { clone } = require('../../../../node_modules/lodash');
 
 module.exports = repository => async (req, res, next) => {

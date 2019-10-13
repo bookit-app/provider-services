@@ -2,7 +2,8 @@
 
 const Ajv = require('ajv');
 const ajv = new Ajv();
-const { errors, ErrorHandler } = require('../util/error-handler');
+const { ErrorHandler } = require('../util/error-handler');
+const { errors } = require('../constants');
 const { clone } = require('lodash');
 
 module.exports = schema => {

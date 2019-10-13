@@ -2,8 +2,8 @@
 
 const { expect } = require('chai');
 const { stub } = require('sinon');
-const extractUserInfoFromHeader = require('../../src/lib/mw/user-mw');
-const { errors } = require('../../src/lib/util/error-handler');
+const extractUserInfoFromHeader = require('../../../src/lib/mw/user-mw');
+const { errors } = require('../../../src/lib/constants');
 
 describe('user-mw unit-tests', () => {
   it('should insert the user info into req.apiUserInfo when provided', () => {

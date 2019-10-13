@@ -1,7 +1,8 @@
 'use strict';
 
 const { isEmpty } = require('lodash');
-const { errors, ErrorHandler } = require('../util/error-handler');
+const { ErrorHandler } = require('../util/error-handler');
+const { errors } = require('../constants');
 
 /**
  * Extracts the user information which was populated

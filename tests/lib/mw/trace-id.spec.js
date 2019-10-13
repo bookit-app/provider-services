@@ -2,7 +2,7 @@
 
 const { expect } = require('chai');
 const { stub } = require('sinon');
-const extractTraceIdFromHeader = require('../../src/lib/mw/trace-id-mw');
+const extractTraceIdFromHeader = require('../../../src/lib/mw/trace-id-mw');
 
 describe('trace-id-mw unit-tests', () => {
   it('should return the trace id when provided', () => {

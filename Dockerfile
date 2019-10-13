@@ -28,4 +28,4 @@ WORKDIR /usr/app/src/services/${service}
 RUN npm install --only=production
 
 # Run the web service on container startup.
-CMD [ "npm", "start" ]
+ENTRYPOINT [ "npm", "start" ]

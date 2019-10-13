@@ -4,16 +4,58 @@ steps:
     entrypoint: npm
     args: ["install"]
 
-  # Validate build
+  # create-service-provider: dependency installation
   - name: "node:10.16.3"
-    id: lint
+    id: create-service-provider-install
+    waitFor:
+      - root-install
     entrypoint: npm
-    args: ["run", "lint"]
+    args: ["install"]
+    dir: src/services/create-service-provider
+
+  # Validate build
+  # - name: "node:10.16.3"
+  #   id: lint
+  #   entrypoint: npm
+  #   args: ["run", "lint"]
 
   - name: "node:10.16.3"
     id: test-unit
-    entrypoint: npm
-    args: ["run", "test"]
+    # entrypoint: npm
+    # args: ["run", "test"]
+
+  # create-service-provider: Build docker image
+  - name: "gcr.io/cloud-builders/docker"
+    id: build-create-service-provider
+    waitFor:
+      - test-unit
+    args:
+      - build
+      - --build-arg
+      - service=create-service-provider
+      - -t
+      - gcr.io/sweng-581-capstone/create-service-provider:0.0.1
+      - .
+
+  # create-service-provider: Push docker image
+  - name: "gcr.io/cloud-builders/docker"
+    id: push-create-service-provider
+    waitFor:
+      - build-create-service-provider
+    args: ["push", "gcr.io/sweng-581-capstone/create-service-provider:0.0.1"]
+
+  # create-service-provider: Deploy to cloud run
+  - name: "gcr.io/cloud-builders/gcloud"
+    waitFor:
+      - push-create-service-provider
+    args:
+      - beta
+      - run
+      - deploy
+      - create-service-provider
+      - --image=gcr.io/sweng-581-capstone/create-service-provider:0.0.1
+      - --region=us-central1
+      - --platform=managed
 
 images:
-  - "gcr.io/sweng-581-capstone/"
+  - "gcr.io/sweng-581-capstone/create-service-provider"

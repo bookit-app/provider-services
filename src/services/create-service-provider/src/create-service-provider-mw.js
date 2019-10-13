@@ -1,7 +1,7 @@
 'use strict';
 
-const { ErrorHandler } = require('../../../lib/util/error-handler');
-const { BAD_REQUEST } = require('../../../lib/constants').statusCodes;
+const { errors, ErrorHandler } = require('../../../lib/util/error-handler');
+const { clone } = require('../../../../node_modules/lodash');
 
 module.exports = repository => async (req, res, next) => {
   const provider = req.body;
@@ -10,13 +10,10 @@ module.exports = repository => async (req, res, next) => {
     next();
   } catch (err) {
     if (err.code === 6) {
-      next(
-        new ErrorHandler(
-          'SAVE_FAILED',
-          BAD_REQUEST,
-          'Service Provider with ein already exists'
-        )
-      );
+      const error = clone(errors.updateFailed);
+      error.message = 'Service Provider with ein already exists';
+
+      next(new ErrorHandler(error));
     }
   }
 };

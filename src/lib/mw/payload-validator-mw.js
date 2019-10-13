@@ -2,7 +2,8 @@
 
 const Ajv = require('ajv');
 const ajv = new Ajv();
-const { ErrorHandler } = require('../util/error-handler');
+const { errors, ErrorHandler } = require('../util/error-handler');
+const { clone } = require('lodash');
 
 module.exports = schema => {
   const validateFunction = ajv.compile(schema);
@@ -15,12 +16,9 @@ module.exports = schema => {
       return;
     }
 
-    next(
-      new ErrorHandler(
-        'MALFORMED_REQUEST',
-        400,
-        ajv.errorsText(validateFunction.errors, { separator: '|' })
-      )
-    );
+    const error = clone(errors.malformedRequest);
+    error.message = ajv.errorsText(validateFunction.errors, { separator: '|' });
+
+    next(new ErrorHandler(error));
   };
 };

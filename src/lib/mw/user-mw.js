@@ -1,7 +1,7 @@
 'use strict';
 
 const { isEmpty } = require('lodash');
-const { UNAUTHORIZED } = require('../constants').statusCodes;
+const { errors, ErrorHandler } = require('../util/error-handler');
 
 /**
  * Extracts the user information which was populated
@@ -14,8 +14,7 @@ module.exports = (req, res, next) => {
   const endpointApiUserInfo = req.header('X-Endpoint-API-UserInfo');
 
   if (isEmpty(endpointApiUserInfo)) {
-    res.status(UNAUTHORIZED);
-    next(new Error('User info not found'));
+    next(new ErrorHandler(errors.unauthorized));
     return;
   }
 

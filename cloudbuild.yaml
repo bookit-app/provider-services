@@ -14,15 +14,15 @@ steps:
     dir: src/services/create-service-provider
 
   # Validate build
-  # - name: "node:10.16.3"
-  #   id: lint
-  #   entrypoint: npm
-  #   args: ["run", "lint"]
+  - name: "node:10.16.3"
+    id: lint
+    entrypoint: npm
+    args: ["run", "lint"]
 
   - name: "node:10.16.3"
     id: test-unit
-    # entrypoint: npm
-    # args: ["run", "test"]
+    entrypoint: npm
+    args: ["run", "test"]
 
   # create-service-provider: Build docker image
   - name: "gcr.io/cloud-builders/docker"

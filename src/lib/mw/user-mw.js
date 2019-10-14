@@ -1,7 +1,7 @@
 'use strict';
 
 const { isEmpty } = require('lodash');
-const { ErrorHandler } = require('../util/error-handler');
+const ServiceError = require('../util/service-error');
 const { errors } = require('../constants');
 
 /**
@@ -15,7 +15,7 @@ module.exports = (req, res, next) => {
   const endpointApiUserInfo = req.header('X-Endpoint-API-UserInfo');
 
   if (isEmpty(endpointApiUserInfo)) {
-    next(new ErrorHandler(errors.unauthorized));
+    next(new ServiceError(errors.unauthorized));
     return;
   }
 

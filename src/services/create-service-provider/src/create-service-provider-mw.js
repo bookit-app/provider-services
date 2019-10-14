@@ -1,20 +1,29 @@
 'use strict';
 
-const { errors } = require('../constants');
-const { ErrorHandler } = require('../../../lib/util/error-handler');
+const { errors } = require('../../../lib/constants');
+const ServiceError = require('../../../lib/util/service-error');
 const { clone } = require('../../../../node_modules/lodash');
 
+/**
+ * Express Middleware to trigger the creation of the
+ * service provider. It assumes the data is pre-validated
+ * and the request object is containing the necessary user details
+ *
+ * @param {Express.Request} req
+ * @param {Express.Response} res
+ * @param {Express.next} next
+ * @returns
+ */
 module.exports = repository => async (req, res, next) => {
-  const provider = req.body;
   try {
-    await repository.create(provider);
+    const provider = req.body;
+    provider.ownerUid = req.apiUserInfo.id;
+    const docId = await repository.create(req.body);
+    res.location(`/provider/${docId}`);
     next();
   } catch (err) {
-    if (err.code === 6) {
-      const error = clone(errors.updateFailed);
-      error.message = 'Service Provider with ein already exists';
-
-      next(new ErrorHandler(error));
-    }
+    const error = clone(errors.updateFailed);
+    error.message = err.message;
+    next(new ServiceError(error));
   }
 };

@@ -1,13 +1,42 @@
 'use strict';
 
-module.exports = {
+const { isEmpty } = require('../../../../node_modules/lodash');
+
+/**
+ * Populates a specific dynamic async check to
+ * determine if the EIN provided for thew new
+ * service provider already exists. This will be trigger
+ * automatically based on the schema validation with AJV
+ *
+ * @param {AJV} ajv
+ * @param {ServiceProviderRepository} serviceProviderRepository
+ */
+module.exports.enableDynamicValidationChecks = (
+  ajv,
+  serviceProviderRepository
+) => {
+  ajv.addKeyword('einExists', {
+    async: true,
+    type: 'string',
+    validate: checkEinExists
+  });
+
+  async function checkEinExists(options, data) {
+    const provider = await serviceProviderRepository.findProviderByEin(data);
+    return isEmpty(provider);
+  }
+};
+
+module.exports.schema = {
+  $async: true,
   $id: 'http://bookit.com/schemas/schema.json',
   type: 'object',
   required: ['ein', 'businessName', 'address'],
   properties: {
     ein: {
       type: 'string',
-      pattern: '^[0-9]{2}-[0-9]{7}$'
+      pattern: '^[0-9]{2}-[0-9]{7}$',
+      einExists: {}
     },
     businessName: {
       type: 'string',

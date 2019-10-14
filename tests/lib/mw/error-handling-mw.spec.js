@@ -2,12 +2,10 @@
 
 const { expect } = require('chai');
 const { stub } = require('sinon');
-const {
-  handleError,
-  ErrorHandler
-} = require('../../../src/lib/util/error-handler');
+const errorHandlingMW = require('../../../src/lib/mw/error-handling-mw');
+const ServiceError = require('../../../src/lib/util/service-error');
 
-describe('error-handler unit tests', () => {
+describe('error-handling-mw unit tests', () => {
   it('should respond with the error information', () => {
     const json = stub();
     const res = {
@@ -20,7 +18,7 @@ describe('error-handler unit tests', () => {
       message: 'TESTmessage'
     };
 
-    handleError(new ErrorHandler(error), res);
+    errorHandlingMW(new ServiceError(error), {}, res, undefined);
 
     expect(res.status.called).to.be.true;
     expect(res.status.calledWith(error.statusCode)).to.be.true;

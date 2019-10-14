@@ -18,7 +18,7 @@ module.exports = repository => async (req, res, next) => {
   try {
     const provider = req.body;
     provider.ownerUid = req.apiUserInfo.id;
-    const docId = await repository.create(req.body);
+    const docId = await repository.create(provider);
     res.location(`/provider/${docId}`);
     next();
   } catch (err) {

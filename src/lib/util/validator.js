@@ -1,7 +1,6 @@
 'use strict';
 
 const Ajv = require('ajv');
+const ajv = new Ajv();
 
-module.exports.getValidator = options => {
-  return new Ajv(options);
-};
+module.exports = ajv;

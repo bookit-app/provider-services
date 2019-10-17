@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 
 // Generate Route with necessary middleware
 app.get(
-  '/configuration/provider/:config',
+  '/configuration/:config',
   require('../../../lib/mw/user-mw'),
   require('../../../lib/mw/trace-id-mw'),
   require('./param-options-mw'),

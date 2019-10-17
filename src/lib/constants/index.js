@@ -20,11 +20,10 @@ module.exports = Object.freeze({
       statusCode: statusCode.BAD_REQUEST,
       message: 'Failed to save information'
     },
-    missingDependency: {
+    systemError: {
       errorCode: 'INTERNAL_ERROR',
       statusCode: statusCode.INTERNAL_SERVER_ERROR,
-      message:
-        'Missing required dependency to process request. Technical Error.'
+      message: 'Well something went wrong...'
     }
   }
 });

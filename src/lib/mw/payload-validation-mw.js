@@ -1,6 +1,5 @@
 'use strict';
 
-const { ValidationError } = require('ajv');
 const ServiceError = require('../util/service-error');
 const { errors } = require('../constants');
 const { clone } = require('lodash');
@@ -45,15 +44,7 @@ async function validationMW(req, res, next) {
  */
 function handleError(err, next) {
   const error = clone(errors.malformedRequest);
-
-  if (err instanceof ValidationError) {
-    error.message = ajv.errorsText(err.errors, {
-      separator: '|'
-    });
-  } else {
-    error.message = err.message;
-  }
-
+  error.message = ajv.errorsText(err.errors);
   next(new ServiceError(error));
   return;
 }

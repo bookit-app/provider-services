@@ -2,11 +2,11 @@
 
 const { expect } = require('chai');
 const { stub } = require('sinon');
-const { errors } = require('../../src/lib/constants');
+const { errors } = require('../../../src/lib/constants');
 const repoStub = {
   create: stub()
 };
-const mw = require('../../src/services/create-service-provider/src/create-service-provider-mw')(
+const mw = require('../../../src/services/create-service-provider/src/create-service-provider-mw')(
   repoStub
 );
 

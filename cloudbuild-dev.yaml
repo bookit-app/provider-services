@@ -11,6 +11,12 @@ steps:
     dir: src/services/create-service-provider
 
   - name: "node:10.16.3"
+    id: configuration-service-install
+    entrypoint: npm
+    args: ["install"]
+    dir: src/services/configuration-service
+
+  - name: "node:10.16.3"
     id: lint
     entrypoint: npm
     args: ["run", "lint"]

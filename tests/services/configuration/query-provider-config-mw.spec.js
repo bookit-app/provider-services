@@ -5,7 +5,7 @@ const { stub, createStubInstance } = require('sinon');
 const { errors } = require('../../../src/lib/constants');
 const ConfigRepository = require('../../../src/lib/repository/config-repository');
 const repo = createStubInstance(ConfigRepository);
-const mw = require('../../../src/services/configuration/src/query-provider-config-mw')(
+const mw = require('../../../src/services/configuration-service/src/query-provider-config-mw')(
   repo
 );
 

@@ -3,7 +3,7 @@
 const { expect } = require('chai');
 const { stub } = require('sinon');
 const { errors } = require('../../../src/lib/constants');
-const mw = require('../../../src/services/configuration/src/param-options-mw');
+const mw = require('../../../src/services/configuration-service/src/param-options-mw');
 
 describe('configuration-service param-options-maw unit tests', () => {
   it('should populate req.configQueryOptions', () => {

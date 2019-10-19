@@ -2,15 +2,41 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const {
-  serviceProviderRepositoryInstance
-} = require('../../../lib/repository/service-provider-repository');
-const ajv = require('../../../lib/util/validator');
-const {
-  schema,
-  enableDynamicValidationChecks
-} = require('./payload-validations');
-enableDynamicValidationChecks(ajv, serviceProviderRepositoryInstance);
+
+// These will be lazily loaded when needed.
+// Per Cloud Run best practice we should lazily load
+// references https://cloud.google.com/run/docs/tips
+let repo, createProviderMW, validationMW, schema;
+
+function createHandlerMW(req, res, next) {
+  repo =
+    repo ||
+    require('../../../lib/repository/service-provider-repository')
+      .serviceProviderRepositoryInstance;
+  createProviderMW =
+    createProviderMW || require('./create-service-provider-mw')(repo);
+  return createProviderMW(req, res, next);
+}
+
+function validateMW(req, res, next) {
+  repo =
+    repo ||
+    require('../../../lib/repository/service-provider-repository')
+      .serviceProviderRepositoryInstance;
+
+  if (!validationMW) {
+    require('./payload-validations').enableDynamicValidationChecks(
+      require('../../../lib/util/validator'),
+      repo
+    );
+  }
+
+  schema = schema || require('./payload-validations').schema;
+  validationMW =
+    validationMW || require('../../../lib/mw/payload-validation-mw')(schema);
+
+  return validationMW(req, res, next);
+}
 
 // Setup Express Server
 const app = express();
@@ -21,8 +47,8 @@ app.post(
   '/provider',
   require('../../../lib/mw/user-mw'),
   require('../../../lib/mw/trace-id-mw'),
-  require('../../../lib/mw/payload-validation-mw')(schema),
-  require('./create-service-provider-mw')(serviceProviderRepositoryInstance),
+  validateMW,
+  createHandlerMW,
   require('./success-mw')
 );
 

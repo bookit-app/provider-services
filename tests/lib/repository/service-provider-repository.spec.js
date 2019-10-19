@@ -16,11 +16,8 @@ describe('service-provider-repository unit tests', () => {
 
   context('create', () => {
     it('should save the document with ein as the key', () => {
-      const documentStub = {
-        create: stub()
-      };
       const collectionStub = {
-        doc: stub().returns(documentStub)
+        add: stub().returns({ id: 'TEST' })
       };
       firestore.collection.returns(collectionStub);
 
@@ -30,8 +27,8 @@ describe('service-provider-repository unit tests', () => {
       };
 
       expect(repo.create(provider)).to.be.fulfilled.then(documentId => {
-        expect(collectionStub.doc.calledWith(documentId)).to.be.true;
-        expect(documentStub.create.calledWith(provider)).to.be.true;
+        expect(collectionStub.add.calledWith(provider)).to.be.true;
+        expect(documentId).to.equal('TEST');
       });
     });
   });
@@ -119,6 +116,7 @@ describe('service-provider-repository unit tests', () => {
 
       const query = createStubInstance(Query);
       query.where.returns(query);
+      query.select.returns(query);
       query.get.resolves(snapshot);
 
       firestore.collection.returns(query);
@@ -139,6 +137,7 @@ describe('service-provider-repository unit tests', () => {
 
       const query = createStubInstance(Query);
       query.where.returns(query);
+      query.select.returns(query);
       query.get.resolves(snapshot);
 
       firestore.collection.returns(query);
@@ -160,6 +159,7 @@ describe('service-provider-repository unit tests', () => {
 
       const query = createStubInstance(Query);
       query.where.returns(query);
+      query.select.returns(query);
       query.get.resolves(snapshot);
 
       firestore.collection.returns(query);
@@ -181,6 +181,7 @@ describe('service-provider-repository unit tests', () => {
 
       const query = createStubInstance(Query);
       query.where.returns(query);
+      query.select.returns(query);
       query.get.resolves(snapshot);
 
       firestore.collection.returns(query);

@@ -1,7 +1,6 @@
 'use strict';
 
 const PROVIDER_COLLECTION = 'ServiceProvider';
-const { v4 } = require('uuid');
 const supportedSearchParams = ['city', 'state', 'zip', 'businessName'];
 
 class ServiceProviderRepository {
@@ -17,14 +16,11 @@ class ServiceProviderRepository {
    * @memberof ServiceProviderRepository
    */
   async create(provider) {
-    const documentId = v4();
-
-    await this.firestore
+    const document = await this.firestore
       .collection(PROVIDER_COLLECTION)
-      .doc(documentId)
-      .create(provider);
+      .add(provider);
 
-    return documentId;
+    return document.id;
   }
 
   /**
@@ -63,11 +59,13 @@ class ServiceProviderRepository {
     const collection = this.firestore.collection(PROVIDER_COLLECTION);
     const query = buildSearchRequest(collection, options);
     const results = [];
-    const querySnapshot = await query.get();
+    const querySnapshot = await query.select('businessName', 'address').get();
 
     if (querySnapshot && !querySnapshot.empty) {
       querySnapshot.forEach(docSnapshot => {
-        results.push(docSnapshot.data());
+        const data = docSnapshot.data();
+        data.providerId = docSnapshot.id;
+        results.push(data);
       });
     }
 

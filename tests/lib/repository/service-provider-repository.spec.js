@@ -3,6 +3,7 @@
 const { expect } = require('chai');
 const { stub, createStubInstance } = require('sinon');
 const Firestore = require('@google-cloud/firestore');
+const { Query } = require('@google-cloud/firestore');
 const ServiceProviderRepository = require('../../../src/lib/repository/service-provider-repository');
 
 describe('service-provider-repository unit tests', () => {
@@ -79,6 +80,118 @@ describe('service-provider-repository unit tests', () => {
           expect(result).to.deep.equal({});
         }
       );
+    });
+  });
+
+  context('search', () => {
+    const options = {
+      zip: '98765',
+      state: 'CA',
+      businessName: 'TEST',
+      city: 'TEST'
+    };
+
+    const profile = {
+      businessName: 'Test Business',
+      ownerUid: '057KyiBA50aXpjjeVXKdyIIkOmf1',
+      ein: '43-2347647',
+      address: {
+        city: 'Palo Alto',
+        state: 'CA',
+        streetAddress: '1234 Home Street',
+        zip: '98765'
+      },
+      phoneNumber: '123-123-1234',
+      email: 'test@test.com'
+    };
+
+    const results = [
+      {
+        data: () => profile
+      }
+    ];
+
+    it('should return the results', () => {
+      const snapshot = {
+        empty: false,
+        forEach: func => results.forEach(func)
+      };
+
+      const query = createStubInstance(Query);
+      query.where.returns(query);
+      query.get.resolves(snapshot);
+
+      firestore.collection.returns(query);
+
+      expect(repo.search(options)).to.be.fulfilled.then(data => {
+        expect(data).to.deep.equal([profile]);
+        expect(query.where.calledWith('address.zip')).to.be.true;
+        expect(query.where.calledWith('address.state')).to.be.true;
+        expect(query.where.calledWith('address.city')).to.be.true;
+        expect(query.where.calledWith('businessName')).to.be.true;
+      });
+    });
+
+    it('should return and empty array', () => {
+      const snapshot = {
+        empty: true
+      };
+
+      const query = createStubInstance(Query);
+      query.where.returns(query);
+      query.get.resolves(snapshot);
+
+      firestore.collection.returns(query);
+
+      expect(repo.search(options)).to.be.fulfilled.then(data => {
+        expect(data).to.deep.equal([]);
+        expect(query.where.calledWith('address.zip')).to.be.true;
+        expect(query.where.calledWith('address.state')).to.be.true;
+        expect(query.where.calledWith('address.city')).to.be.true;
+        expect(query.where.calledWith('businessName')).to.be.true;
+      });
+    });
+
+    it('should return and all records if empty options are provided', () => {
+      const snapshot = {
+        empty: false,
+        forEach: func => results.forEach(func)
+      };
+
+      const query = createStubInstance(Query);
+      query.where.returns(query);
+      query.get.resolves(snapshot);
+
+      firestore.collection.returns(query);
+
+      expect(repo.search({})).to.be.fulfilled.then(data => {
+        expect(data).to.deep.equal([profile]);
+        expect(query.where.calledWith('address.zip')).to.be.false;
+        expect(query.where.calledWith('address.state')).to.be.false;
+        expect(query.where.calledWith('address.city')).to.be.false;
+        expect(query.where.calledWith('businessName')).to.be.false;
+      });
+    });
+
+    it('should return and all records if no options are provided', () => {
+      const snapshot = {
+        empty: false,
+        forEach: func => results.forEach(func)
+      };
+
+      const query = createStubInstance(Query);
+      query.where.returns(query);
+      query.get.resolves(snapshot);
+
+      firestore.collection.returns(query);
+
+      expect(repo.search()).to.be.fulfilled.then(data => {
+        expect(data).to.deep.equal([profile]);
+        expect(query.where.calledWith('address.zip')).to.be.false;
+        expect(query.where.calledWith('address.state')).to.be.false;
+        expect(query.where.calledWith('address.city')).to.be.false;
+        expect(query.where.calledWith('businessName')).to.be.false;
+      });
     });
   });
 });

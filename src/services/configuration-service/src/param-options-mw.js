@@ -1,6 +1,6 @@
 'use strict';
 
-const { clone, camelCase } = require('lodash');
+const { clone, camelCase } = require('../../../../node_modules/lodash');
 const { errors } = require('../../../lib/constants');
 const ServiceError = require('../../../lib/util/service-error.js');
 const { supportedTypes } = require('../../../lib/repository/config-repository');

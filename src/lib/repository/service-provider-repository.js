@@ -2,7 +2,7 @@
 
 const PROVIDER_COLLECTION = 'ServiceProvider';
 const { v4 } = require('uuid');
-const supportedSearchParams = ['city', 'state', 'zip'];
+const supportedSearchParams = ['city', 'state', 'zip', 'businessName'];
 
 class ServiceProviderRepository {
   constructor(firestore) {

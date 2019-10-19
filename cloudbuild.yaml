@@ -22,6 +22,15 @@ steps:
     args: ["install"]
     dir: src/services/configuration-service
 
+  # provider-search: dependency installation
+  - name: "node:10.16.3"
+    id: provider-search-install
+    waitFor:
+      - root-install
+    entrypoint: npm
+    args: ["install"]
+    dir: src/services/provider-search
+
   # Validate build
   - name: "node:10.16.3"
     id: lint
@@ -77,6 +86,26 @@ steps:
         "gcr.io/sweng-581-capstone/service-provider-config-service:0.0.1",
       ]
 
+  # provider-search: Build docker image
+  - name: "gcr.io/cloud-builders/docker"
+    id: build-provider-search
+    waitFor:
+      - test-unit
+    args:
+      - build
+      - --build-arg
+      - service=provider-search
+      - -t
+      - gcr.io/sweng-581-capstone/provider-search:0.0.1
+      - .
+
+  # provider-search: Push docker image
+  - name: "gcr.io/cloud-builders/docker"
+    id: push-provider-search
+    waitFor:
+      - build-provider-search
+    args: ["push", "gcr.io/sweng-581-capstone/provider-search:0.0.1"]
+
   # create-service-provider: Deploy to cloud run
   - name: "gcr.io/cloud-builders/gcloud"
     waitFor:
@@ -102,6 +131,21 @@ steps:
       - --image=gcr.io/sweng-581-capstone/service-provider-config-service:0.0.1
       - --region=us-central1
       - --platform=managed
+
+  # provider-search:: Deploy to cloud run
+  - name: "gcr.io/cloud-builders/gcloud"
+    waitFor:
+      - push-provider-search
+    args:
+      - beta
+      - run
+      - deploy
+      - provider-search
+      - --image=gcr.io/sweng-581-capstone/provider-search:0.0.1
+      - --region=us-central1
+      - --platform=managed
+
 images:
   - "gcr.io/sweng-581-capstone/create-service-provider"
   - "gcr.io/sweng-581-capstone/service-provider-config-service:0.0.1"
+  - "gcr.io/sweng-581-capstone/provider-search:0.0.1"

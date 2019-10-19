@@ -17,6 +17,12 @@ steps:
     dir: src/services/configuration-service
 
   - name: "node:10.16.3"
+    id: provider-search-install
+    entrypoint: npm
+    args: ["install"]
+    dir: src/services/provider-search
+
+  - name: "node:10.16.3"
     id: lint
     entrypoint: npm
     args: ["run", "lint"]

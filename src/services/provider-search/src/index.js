@@ -6,36 +6,15 @@ const bodyParser = require('body-parser');
 // These will be lazily loaded when needed.
 // Per Cloud Run best practice we should lazily load
 // references https://cloud.google.com/run/docs/tips
-let repo, createProviderMW, validationMW, schema;
+let repo, searchProfileMW;
 
-function createHandlerMW(req, res, next) {
+function searchHandlerMW(req, res, next) {
   repo =
     repo ||
     require('../../../lib/repository/service-provider-repository')
       .serviceProviderRepositoryInstance;
-  createProviderMW =
-    createProviderMW || require('./create-service-provider-mw')(repo);
-  return createProviderMW(req, res, next);
-}
-
-function validateMW(req, res, next) {
-  repo =
-    repo ||
-    require('../../../lib/repository/service-provider-repository')
-      .serviceProviderRepositoryInstance;
-
-  if (!validationMW) {
-    require('./payload-validations').enableDynamicValidationChecks(
-      require('../../../lib/util/validator'),
-      repo
-    );
-  }
-
-  schema = schema || require('./payload-validations').schema;
-  validationMW =
-    validationMW || require('../../../lib/mw/payload-validation-mw')(schema);
-
-  return validationMW(req, res, next);
+  searchProfileMW = searchProfileMW || require('./provider-search-mw')(repo);
+  return searchProfileMW(req, res, next);
 }
 
 // Setup Express Server
@@ -43,13 +22,12 @@ const app = express();
 app.use(bodyParser.json());
 
 // Generate Route with necessary middleware
-app.post(
-  '/provider',
+app.get(
+  '/search',
   require('../../../lib/mw/user-mw'),
   require('../../../lib/mw/trace-id-mw'),
-  validateMW,
-  createHandlerMW,
-  require('./success-mw')
+  require('./search-options-mw'),
+  searchHandlerMW
 );
 
 app.use(require('../../../lib/mw/error-handling-mw'));

@@ -2,9 +2,20 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const {
-  configRepositoryInstance
-} = require('../../../lib/repository/config-repository');
+
+// These will be lazily loaded when needed.
+// Per Cloud Run best practice we should lazily load
+// references https://cloud.google.com/run/docs/tips
+let repo, queryConfigMW;
+
+function queryHandlerMW(req, res, next) {
+  repo =
+    repo ||
+    require('../../../lib/repository/config-repository')
+      .configRepositoryInstance;
+  queryConfigMW = queryConfigMW || require('./query-provider-config-mw')(repo);
+  return queryConfigMW(req, res, next);
+}
 
 // Setup Express Server
 const app = express();
@@ -16,7 +27,7 @@ app.get(
   require('../../../lib/mw/user-mw'),
   require('../../../lib/mw/trace-id-mw'),
   require('./param-options-mw'),
-  require('./query-provider-config-mw')(configRepositoryInstance)
+  queryHandlerMW
 );
 
 app.use(require('../../../lib/mw/error-handling-mw'));

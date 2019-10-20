@@ -1,7 +1,7 @@
 'use strict';
 
 const PROVIDER_COLLECTION = 'ServiceProvider';
-const { v4 } = require('uuid');
+const supportedSearchParams = ['city', 'state', 'zip', 'businessName'];
 
 class ServiceProviderRepository {
   constructor(firestore) {
@@ -16,14 +16,11 @@ class ServiceProviderRepository {
    * @memberof ServiceProviderRepository
    */
   async create(provider) {
-    const documentId = v4();
-
-    await this.firestore
+    const document = await this.firestore
       .collection(PROVIDER_COLLECTION)
-      .doc(documentId)
-      .create(provider);
+      .add(provider);
 
-    return documentId;
+    return document.id;
   }
 
   /**
@@ -49,10 +46,66 @@ class ServiceProviderRepository {
 
     return {};
   }
+
+  /**
+   * Search for Providers based on the input options
+   * available options are defined in supportedSearchParams
+   *
+   * @param {*} options
+   * @returns
+   * @memberof ServiceProviderRepository
+   */
+  async search(options) {
+    const collection = this.firestore.collection(PROVIDER_COLLECTION);
+    const query = buildSearchRequest(collection, options);
+    const results = [];
+    const querySnapshot = await query.select('businessName', 'address').get();
+
+    if (querySnapshot && !querySnapshot.empty) {
+      querySnapshot.forEach(docSnapshot => {
+        const data = docSnapshot.data();
+        data.providerId = docSnapshot.id;
+        results.push(data);
+      });
+    }
+
+    return results;
+  }
+}
+
+/**
+ * Processes the options for query and builds a firestore
+ * query request which can be used
+ *
+ * @param {*} collection
+ * @param {*} options
+ * @returns {Query}
+ */
+function buildSearchRequest(collection, options) {
+  let query = collection;
+
+  if (!options) return query;
+
+  if (options.businessName) {
+    query = query.where('businessName', '==', options.businessName);
+  }
+
+  if (options.city) {
+    query = query.where('address.city', '==', options.city);
+  }
+  if (options.state) {
+    query = query.where('address.state', '==', options.state);
+  }
+
+  if (options.zip) {
+    query = query.where('address.zip', '==', options.zip);
+  }
+
+  return query;
 }
 
 module.exports = ServiceProviderRepository;
-
+module.exports.supportedSearchParams = supportedSearchParams;
 module.exports.serviceProviderRepositoryInstance = new ServiceProviderRepository(
   require('./firestore')
 );

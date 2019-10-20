@@ -2,32 +2,57 @@
 
 const { expect } = require('chai');
 const { stub, createStubInstance } = require('sinon');
-const Firestore = require('@google-cloud/firestore');
-const { Query } = require('@google-cloud/firestore');
+const {
+  CollectionReference,
+  DocumentReference,
+  Firestore,
+  Query
+} = require('@google-cloud/firestore');
 const ServiceProviderRepository = require('../../../src/lib/repository/service-provider-repository');
+
+const provider = {
+  businessName: 'Test Business',
+  ownerUid: '057KyiBA50aXpjjeVXKdyIIkOmf1',
+  ein: '43-2347647',
+  address: {
+    streetAddress: '1234 Home Street',
+    zip: '98765',
+    city: 'Palo Alto',
+    state: 'CA'
+  },
+  phoneNumber: '123-123-1234',
+  email: 'test@test.com'
+};
 
 describe('service-provider-repository unit tests', () => {
   let repo, firestore;
+  let collectionReference, documentReference;
 
   before(() => {
     firestore = createStubInstance(Firestore);
+    collectionReference = createStubInstance(CollectionReference);
+    documentReference = createStubInstance(DocumentReference);
+    collectionReference.doc.returns(documentReference);
+    firestore.collection.returns(collectionReference);
+
     repo = new ServiceProviderRepository(firestore);
   });
 
-  context('create', () => {
-    it('should save the document with ein as the key', () => {
-      const collectionStub = {
-        add: stub().returns({ id: 'TEST' })
-      };
-      firestore.collection.returns(collectionStub);
+  afterEach(() => {
+    documentReference.get.resetHistory();
+    documentReference.set.resetHistory();
+    documentReference.delete.resetHistory();
+    documentReference.create.resetHistory();
+    collectionReference.doc.resetHistory();
+    collectionReference.where.resetHistory();
+  });
 
-      const provider = {
-        ein: '12-1234567',
-        businessName: 'TESTBUSINESS'
-      };
+  context('create', () => {
+    it('should save the document', () => {
+      collectionReference.add.resolves({ id: 'TEST' });
 
       expect(repo.create(provider)).to.be.fulfilled.then(documentId => {
-        expect(collectionStub.add.calledWith(provider)).to.be.true;
+        expect(collectionReference.add.calledWith(provider)).to.be.true;
         expect(documentId).to.equal('TEST');
       });
     });
@@ -35,22 +60,15 @@ describe('service-provider-repository unit tests', () => {
 
   context('findProviderByEin', () => {
     it('should return a first found document', () => {
-      const provider = {
-        ein: '12-1234567',
-        businessName: 'TESTBUSINESS'
-      };
-
-      const snapshot = {
-        empty: false,
-        docs: [{ data: () => provider }]
-      };
-      const getStub = stub().resolves(snapshot);
-      const collectionStub = {
-        where: stub().returns({
-          get: getStub
-        })
-      };
-      firestore.collection.returns(collectionStub);
+      collectionReference.where.returns(documentReference);
+      documentReference.get.resolves({
+        docs: [
+          {
+            data: () => provider
+          }
+        ],
+        empty: false
+      });
 
       expect(repo.findProviderByEin(provider.ein)).to.be.fulfilled.then(
         result => {
@@ -60,23 +78,75 @@ describe('service-provider-repository unit tests', () => {
     });
 
     it('should return nothing if no documents are found', () => {
-      const snapshot = {
-        empty: true,
-        docs: []
-      };
-      const getStub = stub().resolves(snapshot);
-      const collectionStub = {
-        where: stub().returns({
-          get: getStub
-        })
-      };
-      firestore.collection.returns(collectionStub);
+      collectionReference.where.returns(documentReference);
+      documentReference.get.resolves({
+        empty: true
+      });
 
       expect(repo.findProviderByEin('12-1231233')).to.be.fulfilled.then(
         result => {
           expect(result).to.deep.equal({});
         }
       );
+    });
+  });
+
+  context('findByProviderId', () => {
+    it('should return provider when found', () => {
+      documentReference.get.resolves({
+        data: () => provider,
+        get: option => provider[option],
+        exists: true
+      });
+
+      expect(repo.findByProviderId('PROVIDER-ID')).to.be.fulfilled.then(
+        response => {
+          expect(response).to.deep.equal(provider);
+        }
+      );
+    });
+
+    it('should return empty object when nothing is found', () => {
+      documentReference.get.resolves({
+        exists: false
+      });
+
+      expect(repo.findByProviderId('PROVIDER-ID')).to.be.fulfilled.then(
+        response => {
+          expect(response).to.deep.equal({});
+        }
+      );
+    });
+
+    it('should return empty object when doc reference is undefined', () => {
+      documentReference.get.resolves(undefined);
+
+      expect(repo.findByProviderId('PROVIDER-ID')).to.be.fulfilled.then(
+        response => {
+          expect(response).to.deep.equal({});
+        }
+      );
+    });
+
+    it('should return provider requested sub-components when found', () => {
+      documentReference.get.resolves({
+        data: () => provider,
+        get: option => provider[option],
+        exists: true
+      });
+
+      expect(
+        repo.findByProviderId('PROVIDER-ID', { select: 'address' })
+      ).to.be.fulfilled.then(response => {
+        expect(response).to.deep.equal({
+          address: {
+            streetAddress: '1234 Home Street',
+            zip: '98765',
+            city: 'Palo Alto',
+            state: 'CA'
+          }
+        });
+      });
     });
   });
 
@@ -88,23 +158,9 @@ describe('service-provider-repository unit tests', () => {
       city: 'TEST'
     };
 
-    const profile = {
-      businessName: 'Test Business',
-      ownerUid: '057KyiBA50aXpjjeVXKdyIIkOmf1',
-      ein: '43-2347647',
-      address: {
-        city: 'Palo Alto',
-        state: 'CA',
-        streetAddress: '1234 Home Street',
-        zip: '98765'
-      },
-      phoneNumber: '123-123-1234',
-      email: 'test@test.com'
-    };
-
     const results = [
       {
-        data: () => profile
+        data: () => provider
       }
     ];
 
@@ -114,7 +170,7 @@ describe('service-provider-repository unit tests', () => {
         forEach: func => results.forEach(func)
       };
 
-      const query = createStubInstance(Query);
+      const query = collectionReference;
       query.where.returns(query);
       query.select.returns(query);
       query.get.resolves(snapshot);
@@ -122,7 +178,7 @@ describe('service-provider-repository unit tests', () => {
       firestore.collection.returns(query);
 
       expect(repo.search(options)).to.be.fulfilled.then(data => {
-        expect(data).to.deep.equal([profile]);
+        expect(data).to.deep.equal([provider]);
         expect(query.where.calledWith('address.zip')).to.be.true;
         expect(query.where.calledWith('address.state')).to.be.true;
         expect(query.where.calledWith('address.city')).to.be.true;
@@ -135,7 +191,7 @@ describe('service-provider-repository unit tests', () => {
         empty: true
       };
 
-      const query = createStubInstance(Query);
+      const query = collectionReference;
       query.where.returns(query);
       query.select.returns(query);
       query.get.resolves(snapshot);
@@ -157,7 +213,7 @@ describe('service-provider-repository unit tests', () => {
         forEach: func => results.forEach(func)
       };
 
-      const query = createStubInstance(Query);
+      const query = collectionReference;
       query.where.returns(query);
       query.select.returns(query);
       query.get.resolves(snapshot);
@@ -165,7 +221,7 @@ describe('service-provider-repository unit tests', () => {
       firestore.collection.returns(query);
 
       expect(repo.search({})).to.be.fulfilled.then(data => {
-        expect(data).to.deep.equal([profile]);
+        expect(data).to.deep.equal([provider]);
         expect(query.where.calledWith('address.zip')).to.be.false;
         expect(query.where.calledWith('address.state')).to.be.false;
         expect(query.where.calledWith('address.city')).to.be.false;
@@ -179,7 +235,7 @@ describe('service-provider-repository unit tests', () => {
         forEach: func => results.forEach(func)
       };
 
-      const query = createStubInstance(Query);
+      const query = collectionReference;
       query.where.returns(query);
       query.select.returns(query);
       query.get.resolves(snapshot);
@@ -187,7 +243,7 @@ describe('service-provider-repository unit tests', () => {
       firestore.collection.returns(query);
 
       expect(repo.search()).to.be.fulfilled.then(data => {
-        expect(data).to.deep.equal([profile]);
+        expect(data).to.deep.equal([provider]);
         expect(query.where.calledWith('address.zip')).to.be.false;
         expect(query.where.calledWith('address.state')).to.be.false;
         expect(query.where.calledWith('address.city')).to.be.false;

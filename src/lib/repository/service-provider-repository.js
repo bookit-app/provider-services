@@ -2,6 +2,7 @@
 
 const PROVIDER_COLLECTION = 'ServiceProvider';
 const supportedSearchParams = ['city', 'state', 'zip', 'businessName'];
+const { isEmpty } = require('lodash');
 
 class ServiceProviderRepository {
   constructor(firestore) {
@@ -45,6 +46,37 @@ class ServiceProviderRepository {
     }
 
     return {};
+  }
+
+  /**
+   * Query for a provider by the provider
+   * additionally options can be used to request
+   * a specific sub map of the provider
+   *
+   * @param { select: string } providerId
+   * @param {*} options
+   * @returns
+   * @memberof ServiceProviderRepository
+   */
+  async findByProviderId(providerId, options) {
+    const documentReference = await this.firestore
+      .collection(PROVIDER_COLLECTION)
+      .doc(providerId)
+      .get();
+
+    if (isEmpty(documentReference) || !documentReference.exists) {
+      return {};
+    }
+
+    let provider = {};
+
+    if (isEmpty(options) || isEmpty(options.select)) {
+      provider = documentReference.data();
+    } else {
+      provider[options.select] = documentReference.get(options.select);
+    }
+
+    return provider;
   }
 
   /**

@@ -105,19 +105,23 @@ class ServiceProviderRepository {
   }
 
   async createServiceForProvider(providerId, service) {
-    await this.firestore
+    if (service.isCustomServiceType) {
+      service.styleId = 'CUSTOM';
+    }
+
+    const document = await this.firestore
       .collection(PROVIDER_COLLECTION)
       .doc(providerId)
       .collection('services')
-      .doc(service.styleId)
-      .create({
+      .add({
+        styleId: service.styleId || 'CUSTOM',
         description: service.description,
         price: service.price,
         currency: service.currency || 'USD',
         isCustomServiceType: service.isCustomServiceType || false
       });
 
-    return service.styleId;
+    return document.id;
   }
 }
 

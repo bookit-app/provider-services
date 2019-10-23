@@ -64,7 +64,7 @@ describe('service-provider-repository unit tests', () => {
 
   context('createServiceForProvider', () => {
     it('should save the document', () => {
-      documentReference.create.resolves({ id: 'TEST' });
+      collectionReference.add.resolves({ id: 'TEST' });
       const service = {
         styleId: 'FADE',
         description: 'We give the best fade with super highly trained staff.',
@@ -78,6 +78,7 @@ describe('service-provider-repository unit tests', () => {
       ).to.be.fulfilled.then(documentId => {
         expect(
           documentReference.create.calledWith({
+            styleId: 'FADE',
             description:
               'We give the best fade with super highly trained staff.',
             price: 15.0,
@@ -85,14 +86,13 @@ describe('service-provider-repository unit tests', () => {
             isCustomServiceType: true
           })
         ).to.be.true;
-        expect(documentId).to.equal('FADE');
+        expect(documentId).to.equal('TEST');
       });
     });
 
     it('should save the document with defaults', () => {
-      documentReference.create.resolves({ id: 'TEST' });
+      collectionReference.add.resolves({ id: 'TEST' });
       const service = {
-        styleId: 'FADE',
         description: 'We give the best fade with super highly trained staff.',
         price: 15.0
       };
@@ -101,7 +101,8 @@ describe('service-provider-repository unit tests', () => {
         repo.createServiceForProvider('TEST-PROVIDER', service)
       ).to.be.fulfilled.then(documentId => {
         expect(
-          documentReference.create.calledWith({
+          collectionReference.add.calledWith({
+            styleId: 'CUSTOM',
             description:
               'We give the best fade with super highly trained staff.',
             price: 15.0,
@@ -109,7 +110,33 @@ describe('service-provider-repository unit tests', () => {
             isCustomServiceType: false
           })
         ).to.be.true;
-        expect(documentId).to.equal('FADE');
+        expect(documentId).to.equal('TEST');
+      });
+    });
+
+    it('should save the document with defaults and force styleId = CUSTOM', () => {
+      collectionReference.add.resolves({ id: 'TEST' });
+      const service = {
+        description: 'We give the best fade with super highly trained staff.',
+        price: 15.0,
+        isCustomServiceType: true,
+        styleId: 'NOT-CUSTOM'
+      };
+
+      expect(
+        repo.createServiceForProvider('TEST-PROVIDER', service)
+      ).to.be.fulfilled.then(documentId => {
+        expect(
+          collectionReference.add.calledWith({
+            styleId: 'CUSTOM',
+            description:
+              'We give the best fade with super highly trained staff.',
+            price: 15.0,
+            currency: 'USD',
+            isCustomServiceType: true
+          })
+        ).to.be.true;
+        expect(documentId).to.equal('TEST');
       });
     });
   });

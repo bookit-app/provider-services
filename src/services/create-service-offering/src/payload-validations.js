@@ -33,7 +33,7 @@ module.exports.schema = {
   $async: true,
   $id: 'http://bookit.com/schemas/service-schema.json',
   type: 'object',
-  required: ['styleId', 'description', 'price'],
+  required: ['description', 'price'],
   properties: {
     styleId: {
       type: 'string',

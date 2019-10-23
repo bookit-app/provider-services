@@ -11,6 +11,12 @@ steps:
     dir: src/services/create-service-provider
 
   - name: "node:10.16.3"
+    id: create-service-offering-install
+    entrypoint: npm
+    args: ["install"]
+    dir: src/services/create-service-offering
+
+  - name: "node:10.16.3"
     id: query-service-provider-install
     entrypoint: npm
     args: ["install"]

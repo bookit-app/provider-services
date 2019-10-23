@@ -103,6 +103,22 @@ class ServiceProviderRepository {
 
     return results;
   }
+
+  async createServiceForProvider(providerId, service) {
+    await this.firestore
+      .collection(PROVIDER_COLLECTION)
+      .doc(providerId)
+      .collection('services')
+      .doc(service.styleId)
+      .create({
+        description: service.description,
+        price: service.price,
+        currency: service.currency || 'USD',
+        isCustomServiceType: service.isCustomServiceType || false
+      });
+
+    return service.styleId;
+  }
 }
 
 /**

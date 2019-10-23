@@ -33,6 +33,7 @@ describe('service-provider-repository unit tests', () => {
     collectionReference = createStubInstance(CollectionReference);
     documentReference = createStubInstance(DocumentReference);
     collectionReference.doc.returns(documentReference);
+    documentReference.collection.returns(collectionReference);
     firestore.collection.returns(collectionReference);
 
     repo = new ServiceProviderRepository(firestore);
@@ -45,6 +46,9 @@ describe('service-provider-repository unit tests', () => {
     documentReference.create.resetHistory();
     collectionReference.doc.resetHistory();
     collectionReference.where.resetHistory();
+    documentReference.collection.resetHistory();
+    documentReference.create.resetHistory();
+    collectionReference.add.resetHistory();
   });
 
   context('create', () => {
@@ -54,6 +58,58 @@ describe('service-provider-repository unit tests', () => {
       expect(repo.create(provider)).to.be.fulfilled.then(documentId => {
         expect(collectionReference.add.calledWith(provider)).to.be.true;
         expect(documentId).to.equal('TEST');
+      });
+    });
+  });
+
+  context('createServiceForProvider', () => {
+    it('should save the document', () => {
+      documentReference.create.resolves({ id: 'TEST' });
+      const service = {
+        styleId: 'FADE',
+        description: 'We give the best fade with super highly trained staff.',
+        price: 15.0,
+        currency: 'USD',
+        isCustomServiceType: true
+      };
+
+      expect(
+        repo.createServiceForProvider('TEST-PROVIDER', service)
+      ).to.be.fulfilled.then(documentId => {
+        expect(
+          documentReference.create.calledWith({
+            description:
+              'We give the best fade with super highly trained staff.',
+            price: 15.0,
+            currency: 'USD',
+            isCustomServiceType: true
+          })
+        ).to.be.true;
+        expect(documentId).to.equal('FADE');
+      });
+    });
+
+    it('should save the document with defaults', () => {
+      documentReference.create.resolves({ id: 'TEST' });
+      const service = {
+        styleId: 'FADE',
+        description: 'We give the best fade with super highly trained staff.',
+        price: 15.0
+      };
+
+      expect(
+        repo.createServiceForProvider('TEST-PROVIDER', service)
+      ).to.be.fulfilled.then(documentId => {
+        expect(
+          documentReference.create.calledWith({
+            description:
+              'We give the best fade with super highly trained staff.',
+            price: 15.0,
+            currency: 'USD',
+            isCustomServiceType: false
+          })
+        ).to.be.true;
+        expect(documentId).to.equal('FADE');
       });
     });
   });

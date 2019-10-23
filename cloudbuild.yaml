@@ -13,6 +13,15 @@ steps:
     args: ["install"]
     dir: src/services/create-service-provider
 
+  # create-service-offering: dependency installation
+  - name: "node:10.16.3"
+    id: create-service-offering-install
+    waitFor:
+      - root-install
+    entrypoint: npm
+    args: ["install"]
+    dir: src/services/create-service-offering
+
   # query-service-provider: dependency installation
   - name: "node:10.16.3"
     id: query-service-provider-install
@@ -70,6 +79,26 @@ steps:
     waitFor:
       - build-create-service-provider
     args: ["push", "gcr.io/sweng-581-capstone/create-service-provider:0.0.1"]
+
+  # create-service-offering: Build docker image
+  - name: "gcr.io/cloud-builders/docker"
+    id: build-create-service-offering
+    waitFor:
+      - test-unit
+    args:
+      - build
+      - --build-arg
+      - service=create-service-offering
+      - -t
+      - gcr.io/sweng-581-capstone/create-service-offering:0.0.1
+      - .
+
+  # create-service-offering: Push docker image
+  - name: "gcr.io/cloud-builders/docker"
+    id: push-create-service-offering
+    waitFor:
+      - build-create-service-offering
+    args: ["push", "gcr.io/sweng-581-capstone/create-service-offering:0.0.1"]
 
   # query-service-provider: Build docker image
   - name: "gcr.io/cloud-builders/docker"
@@ -148,6 +177,19 @@ steps:
       - --region=us-central1
       - --platform=managed
 
+  # create-service-offering: Deploy to cloud run
+  - name: "gcr.io/cloud-builders/gcloud"
+    waitFor:
+      - push-create-service-offering
+    args:
+      - beta
+      - run
+      - deploy
+      - create-service-offering
+      - --image=gcr.io/sweng-581-capstone/create-service-offering:0.0.1
+      - --region=us-central1
+      - --platform=managed
+
   # query-service-provider: Deploy to cloud run
   - name: "gcr.io/cloud-builders/gcloud"
     waitFor:
@@ -189,6 +231,7 @@ steps:
 
 images:
   - "gcr.io/sweng-581-capstone/create-service-provider"
+  - "gcr.io/sweng-581-capstone/create-service-offering:0.0.1"
   - "gcr.io/sweng-581-capstone/query-service-provider:0.0.1"
   - "gcr.io/sweng-581-capstone/service-provider-config-service:0.0.1"
   - "gcr.io/sweng-581-capstone/provider-search:0.0.1"

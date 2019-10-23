@@ -18,12 +18,8 @@ module.exports.enableDynamicValidationChecks = (ajv, configRepository) => {
 
   async function checkStyleExists(
     schema,
-    data,
-    parentSchema,
-    dataPath,
-    parentDataObject
+    data
   ) {
-    if (parentDataObject.isCustomServiceType) return true;
     const styles = await configRepository.query('styles');
     return !isEmpty(styles.hairStyles.find(style => style.style === data));
   }
@@ -38,9 +34,6 @@ module.exports.schema = {
     styleId: {
       type: 'string',
       styleExists: {}
-    },
-    isCustomServiceType: {
-      type: 'boolean'
     },
     description: {
       type: 'string'

@@ -46,7 +46,8 @@ module.exports.schema = {
       type: 'string'
     },
     price: {
-      type: 'number'
+      type: 'number',
+      minimum: 0
     },
     currency: {
       type: 'string',

@@ -64,6 +64,10 @@ describe('service-offering-repository unit tests', () => {
       );
     });
 
+    it('should return the collection name', () => {
+      expect(repo.collection).to.equal('services');
+    });
+
     it('should save the document with defaults', () => {
       collectionReference.add.resolves({ id: 'TEST' });
       const service = {

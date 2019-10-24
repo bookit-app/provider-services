@@ -8,6 +8,7 @@ const {
   Firestore
 } = require('@google-cloud/firestore');
 const ServiceProviderRepository = require('../../../src/lib/repository/service-provider-repository');
+const { isEmpty } = require('lodash');
 
 const provider = {
   businessName: 'Test Business',
@@ -48,6 +49,10 @@ describe('service-provider-repository unit tests', () => {
     documentReference.collection.resetHistory();
     documentReference.create.resetHistory();
     collectionReference.add.resetHistory();
+  });
+
+  it('should return the list of applicable search fields', () => {
+    expect(isEmpty(repo.selectableMaps)).to.be.false;
   });
 
   context('create', () => {

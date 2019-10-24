@@ -2,11 +2,24 @@
 
 const PROVIDER_COLLECTION = 'ServiceProvider';
 const supportedSearchParams = ['city', 'state', 'zip', 'businessName'];
+const selectableMaps = ['address'];
 const { isEmpty } = require('lodash');
 
 class ServiceProviderRepository {
   constructor(firestore) {
     this.firestore = firestore;
+  }
+
+  /**
+   * Provides the list of document submaps which
+   * can be directly selected rather than getting
+   * the entire documents data
+   *
+   * @readonly
+   * @memberof ServiceProviderRepository
+   */
+  get selectableMaps() {
+    return selectableMaps;
   }
 
   /**
@@ -69,7 +82,6 @@ class ServiceProviderRepository {
     }
 
     let provider = {};
-
     if (isEmpty(options) || isEmpty(options.select)) {
       provider = documentReference.data();
     } else {
@@ -102,26 +114,6 @@ class ServiceProviderRepository {
     }
 
     return results;
-  }
-
-  async createServiceForProvider(providerId, service) {
-    if (service.isCustomServiceType) {
-      service.styleId = 'CUSTOM';
-    }
-
-    const document = await this.firestore
-      .collection(PROVIDER_COLLECTION)
-      .doc(providerId)
-      .collection('services')
-      .add({
-        styleId: service.styleId || 'CUSTOM',
-        description: service.description,
-        price: service.price,
-        currency: service.currency || 'USD',
-        isCustomServiceType: service.isCustomServiceType || false
-      });
-
-    return document.id;
   }
 }
 
@@ -157,6 +149,7 @@ function buildSearchRequest(collection, options) {
 }
 
 module.exports = ServiceProviderRepository;
+module.exports.COLLECTION_NAME = PROVIDER_COLLECTION;
 module.exports.supportedSearchParams = supportedSearchParams;
 module.exports.serviceProviderRepositoryInstance = new ServiceProviderRepository(
   require('./firestore')

@@ -16,13 +16,12 @@ const req = {
   },
   params: {
     providerId: 'TEST-PROVIDER'
-  }
+  },
+  providerQueryOptions: {}
 };
 
-const sendStub = stub();
 const res = {
-  status: stub().returns({ send: sendStub }),
-  sendStatus: sendStub
+  provider: {}
 };
 
 const provider = {
@@ -41,62 +40,41 @@ const provider = {
 
 const next = stub();
 
-afterEach(() => {
-  sendStub.resetHistory();
-  res.status.resetHistory();
-  next.resetHistory();
-});
-
 describe('query-service-provider query-provider-mw unit tests', () => {
-  it('should respond with OK and the profile when found', async () => {
+  afterEach(() => {
+    res.provider = {};
+    req.providerQueryOptions = {};
+    next.resetHistory();
+    repoStub.findByProviderId.resetHistory();
+    repoStub.selectableMaps = [];
+  });
+
+  it('should populate the provider when found', async () => {
     repoStub.findByProviderId.resolves(provider);
     await mw(req, res, next);
     expect(repoStub.findByProviderId.calledWith('TEST-PROVIDER')).to.be.true;
-    expect(sendStub.calledWith(provider));
-    expect(res.status.calledWith(200));
-    expect(next.called).to.be.false;
+    expect(res.provider).to.deep.equal(provider);
+    expect(next.called).to.be.true;
   });
 
-  it('should respond with OK when the profile when found and provide options to repo', async () => {
-    const reqWithOptions = {
-      apiUserInfo: {
-        id: 'TEST-USER'
-      },
-      params: {
-        providerId: 'TEST-PROVIDER'
-      },
-      providerQueryOptions: {
-        select: 'address'
-      }
-    };
+  it('should just call next when select option does not apply', async () => {
+    req.providerQueryOptions.select = 'TEST';
+    repoStub.selectableMaps = [];
 
-    repoStub.findByProviderId.resolves({
-      address: {
-        streetAddress: '1234 Home Street',
-        zip: '98765',
-        city: 'Palo Alto',
-        state: 'CA'
-      }
-    });
-
-    await mw(reqWithOptions, res, next);
-    expect(
-      repoStub.findByProviderId.calledWith(
-        'TEST-PROVIDER',
-        reqWithOptions.providerQueryOptions
-      )
-    ).to.be.true;
-    expect(sendStub.calledWith(provider));
-    expect(res.status.calledWith(200));
-    expect(next.called).to.be.false;
+    await mw(req, res, next);
+    expect(repoStub.findByProviderId.called).to.be.false;
+    expect(next.called).to.be.true;
   });
 
-  it('should respond with NOT_FOUND when no profile is found', async () => {
-    repoStub.findByProviderId.resolves(undefined);
+  it('should query when select option does apply', async () => {
+    req.providerQueryOptions.select = 'TEST';
+    repoStub.selectableMaps = ['TEST'];
+    repoStub.findByProviderId.resolves(provider);
+
     await mw(req, res, next);
     expect(repoStub.findByProviderId.calledWith('TEST-PROVIDER')).to.be.true;
-    expect(sendStub.calledWith(404));
-    expect(next.called).to.be.false;
+    expect(res.provider).to.deep.equal(provider);
+    expect(next.called).to.be.true;
   });
 
   it('should call next with an error when repo query fails', async () => {
@@ -104,8 +82,6 @@ describe('query-service-provider query-provider-mw unit tests', () => {
     await mw(req, res, next);
 
     expect(repoStub.findByProviderId.calledWith('TEST-PROVIDER')).to.be.true;
-    expect(sendStub.called).to.be.false;
-    expect(res.status.called).to.be.false;
     expect(next.called).to.be.true;
 
     const { errorCode, statusCode } = next.args[0][0];

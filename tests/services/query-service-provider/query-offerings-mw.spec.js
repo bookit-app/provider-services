@@ -28,7 +28,6 @@ const res = {
 const services = [
   {
     currency: 'USD',
-    isCustomServiceType: false,
     price: 40.58,
     styleId: 'FADE',
     description: 'Beard Trim'
@@ -37,7 +36,6 @@ const services = [
     styleId: 'CUSTOM',
     description: 'Beard Trim',
     currency: 'USD',
-    isCustomServiceType: true,
     price: 40.58
   }
 ];

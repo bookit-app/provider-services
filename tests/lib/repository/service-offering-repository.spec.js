@@ -43,8 +43,7 @@ describe('service-offering-repository unit tests', () => {
         styleId: 'FADE',
         description: 'We give the best fade with super highly trained staff.',
         price: 15.0,
-        currency: 'USD',
-        isCustomServiceType: false
+        currency: 'USD'
       };
 
       expect(repo.create('TEST-PROVIDER', service)).to.be.fulfilled.then(
@@ -55,8 +54,7 @@ describe('service-offering-repository unit tests', () => {
               description:
                 'We give the best fade with super highly trained staff.',
               price: 15.0,
-              currency: 'USD',
-              isCustomServiceType: false
+              currency: 'USD'
             })
           ).to.be.true;
           expect(documentId).to.equal('TEST');
@@ -83,8 +81,7 @@ describe('service-offering-repository unit tests', () => {
               description:
                 'We give the best fade with super highly trained staff.',
               price: 15.0,
-              currency: 'USD',
-              isCustomServiceType: false
+              currency: 'USD'
             })
           ).to.be.true;
           expect(documentId).to.equal('TEST');
@@ -97,7 +94,6 @@ describe('service-offering-repository unit tests', () => {
       const service = {
         description: 'We give the best fade with super highly trained staff.',
         price: 15.0,
-        isCustomServiceType: true,
         styleId: 'NOT-CUSTOM'
       };
 
@@ -109,8 +105,7 @@ describe('service-offering-repository unit tests', () => {
               description:
                 'We give the best fade with super highly trained staff.',
               price: 15.0,
-              currency: 'USD',
-              isCustomServiceType: true
+              currency: 'USD'
             })
           ).to.be.true;
           expect(documentId).to.equal('TEST');
@@ -123,7 +118,6 @@ describe('service-offering-repository unit tests', () => {
     const services = [
       {
         currency: 'USD',
-        isCustomServiceType: false,
         price: 40.58,
         styleId: 'FADE',
         description: 'Beard Trim'
@@ -132,7 +126,6 @@ describe('service-offering-repository unit tests', () => {
         styleId: 'CUSTOM',
         description: 'Beard Trim',
         currency: 'USD',
-        isCustomServiceType: true,
         price: 40.58
       }
     ];

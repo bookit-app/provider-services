@@ -5,7 +5,7 @@ const ServiceError = require('../../../lib/util/service-error');
 const { clone, isEmpty } = require('lodash');
 
 /**
- * Express Middleware to trigger the provider query request
+ * Express Middleware to to trigger the provider query request
  *
  * @param {Express.Request} req
  * @param {Express.Response} res
@@ -16,12 +16,11 @@ module.exports = repository => async (req, res, next) => {
   try {
     if (
       isEmpty(req.providerQueryOptions) ||
-      repository.selectableMaps.includes(req.providerQueryOptions.select)
+      req.providerQueryOptions.select === repository.collection
     ) {
-      res.provider = await repository.findByProviderId(
-        req.params.providerId,
-        req.providerQueryOptions
-      );
+      res.provider[
+        repository.collection
+      ] = await repository.findAllServiceOfferings(req.params.providerId);
     }
 
     next();

@@ -4,7 +4,7 @@ const { expect } = require('chai');
 const { stub } = require('sinon');
 const { errors } = require('../../../src/lib/constants');
 const repoStub = {
-  createServiceForProvider: stub()
+  create: stub()
 };
 const mw = require('../../../src/services/create-service-offering/src/create-service-offering-mw')(
   repoStub
@@ -35,15 +35,15 @@ describe('create-service-offering service unit-tests', () => {
   afterEach(() => {
     next.resetHistory();
     res.location.resetHistory();
-    repoStub.createServiceForProvider.resetHistory();
+    repoStub.create.resetHistory();
   });
 
   it('should trigger the creation of the service', () => {
-    repoStub.createServiceForProvider.resolves('DOC-ID');
+    repoStub.create.resolves('DOC-ID');
     expect(mw(req, res, next)).to.be.fulfilled.then(() => {
-      expect(repoStub.createServiceForProvider.called).to.be.true;
+      expect(repoStub.create.called).to.be.true;
       expect(
-        repoStub.createServiceForProvider.calledWith('TEST-PROVIDER', {
+        repoStub.create.calledWith('TEST-PROVIDER', {
           styleId: 'FADE',
           description: 'We give the best fade with super highly trained staff.',
           price: 15.0,
@@ -56,12 +56,12 @@ describe('create-service-offering service unit-tests', () => {
   });
 
   it('should call next with FORCED-ERROR error on failure from repo', () => {
-    repoStub.createServiceForProvider.rejects(new Error('FORCED-ERROR'));
+    repoStub.create.rejects(new Error('FORCED-ERROR'));
 
     expect(mw(req, res, next)).to.be.fulfilled.then(() => {
-      expect(repoStub.createServiceForProvider.called).to.be.true;
+      expect(repoStub.create.called).to.be.true;
       expect(
-        repoStub.createServiceForProvider.calledWith('TEST-PROVIDER', {
+        repoStub.create.calledWith('TEST-PROVIDER', {
           styleId: 'FADE',
           description: 'We give the best fade with super highly trained staff.',
           price: 15.0,

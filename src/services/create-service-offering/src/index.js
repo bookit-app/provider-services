@@ -11,8 +11,8 @@ let configRepo, providerRepo, createServiceMW, validationMW, schema;
 function createHandlerMW(req, res, next) {
   providerRepo =
     providerRepo ||
-    require('../../../lib/repository/service-provider-repository')
-      .serviceProviderRepositoryInstance;
+    require('../../../lib/repository/service-offering-repository')
+      .serviceOfferingRepositoryInstance;
   createServiceMW =
     createServiceMW || require('./create-service-offering-mw')(providerRepo);
   return createServiceMW(req, res, next);

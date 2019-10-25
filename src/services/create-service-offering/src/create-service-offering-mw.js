@@ -17,8 +17,8 @@ module.exports = repository => async (req, res, next) => {
   try {
     const service = req.body;
     const provider = req.params.providerId;
-    const docId = await repository.createServiceForProvider(provider, service);
-    res.location(`/provider/${provider}/service/${docId}`);
+    const docId = await repository.create(provider, service);
+    res.location(`/provider/${provider}/services/${docId}`);
     next();
   } catch (err) {
     const error = clone(errors.updateFailed);

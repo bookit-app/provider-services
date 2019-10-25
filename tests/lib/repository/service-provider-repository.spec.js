@@ -51,10 +51,6 @@ describe('service-provider-repository unit tests', () => {
     collectionReference.add.resetHistory();
   });
 
-  it('should return the list of applicable search fields', () => {
-    expect(isEmpty(repo.selectableMaps)).to.be.false;
-  });
-
   context('create', () => {
     it('should save the document', () => {
       collectionReference.add.resolves({ id: 'TEST' });
@@ -135,27 +131,6 @@ describe('service-provider-repository unit tests', () => {
         }
       );
     });
-
-    it('should return provider requested sub-components when found', () => {
-      documentReference.get.resolves({
-        data: () => provider,
-        get: option => provider[option],
-        exists: true
-      });
-
-      expect(
-        repo.findByProviderId('PROVIDER-ID', { select: 'address' })
-      ).to.be.fulfilled.then(response => {
-        expect(response).to.deep.equal({
-          address: {
-            streetAddress: '1234 Home Street',
-            zip: '98765',
-            city: 'Palo Alto',
-            state: 'CA'
-          }
-        });
-      });
-    });
   });
 
   context('search', () => {
@@ -163,7 +138,8 @@ describe('service-provider-repository unit tests', () => {
       zip: '98765',
       state: 'CA',
       businessName: 'TEST',
-      city: 'TEST'
+      city: 'TEST',
+      styles: 'FADE'
     };
 
     const results = [
@@ -256,6 +232,16 @@ describe('service-provider-repository unit tests', () => {
         expect(query.where.calledWith('address.state')).to.be.false;
         expect(query.where.calledWith('address.city')).to.be.false;
         expect(query.where.calledWith('businessName')).to.be.false;
+      });
+    });
+  });
+
+  context('update', () => {
+    it('should resolve', () => {
+      documentReference.set.resolves();
+      expect(repo.update('TEST', provider)).to.be.fulfilled.then(() => {
+        expect(collectionReference.doc.calledWith('TEST')).to.be.true;
+        expect(documentReference.set.calledWith(provider)).to.be.true;
       });
     });
   });

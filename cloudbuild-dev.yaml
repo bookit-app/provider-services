@@ -17,6 +17,12 @@ steps:
     dir: src/services/create-service-offering
 
   - name: "node:10.16.3"
+    id: offering-notification-install
+    entrypoint: npm
+    args: ["install"]
+    dir: src/services/offering-notification-processor
+
+  - name: "node:10.16.3"
     id: query-service-provider-install
     entrypoint: npm
     args: ["install"]

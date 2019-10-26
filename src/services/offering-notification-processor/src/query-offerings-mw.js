@@ -14,9 +14,9 @@ const { clone } = require('lodash');
  */
 module.exports = repository => async (req, res, next) => {
   try {
-    res.provider[
-      repository.collection
-    ] = await repository.findAllServiceOfferings(req.params.providerId);
+    res.services = await repository.findAllServiceOfferings(
+      req.body.providerId
+    );
 
     next();
   } catch (err) {

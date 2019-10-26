@@ -7,7 +7,7 @@ const repoStub = {
   findAllServiceOfferings: stub(),
   collection: 'services'
 };
-const mw = require('../../../src/services/query-service-provider/src/query-offerings-mw')(
+const mw = require('../../../src/services/offering-notification-processor/src/query-offerings-mw')(
   repoStub
 );
 
@@ -15,10 +15,9 @@ const req = {
   apiUserInfo: {
     id: 'TEST-USER'
   },
-  params: {
+  body: {
     providerId: 'TEST-PROVIDER'
-  },
-  providerQueryOptions: {}
+  }
 };
 
 const res = {
@@ -42,7 +41,7 @@ const services = [
 
 const next = stub();
 
-describe('query-service-provider query-offering-mw unit tests', () => {
+describe('offering-notification-processor query-offering-mw unit tests', () => {
   afterEach(() => {
     res.provider = {};
     req.providerQueryOptions = {};
@@ -55,7 +54,7 @@ describe('query-service-provider query-offering-mw unit tests', () => {
     await mw(req, res, next);
     expect(repoStub.findAllServiceOfferings.calledWith('TEST-PROVIDER')).to.be
       .true;
-    expect(res.provider.services).to.deep.equal(services);
+    expect(res.services).to.deep.equal(services);
     expect(next.called).to.be.true;
   });
 

@@ -6,16 +6,16 @@ const bodyParser = require('body-parser');
 // These will be lazily loaded when needed.
 // Per Cloud Run best practice we should lazily load
 // references https://cloud.google.com/run/docs/tips
-let providerRepo, offeringRepo, queryProviderMW, queryOfferingsMW;
+let providerRepo, offeringRepo, updateProviderMW, queryOfferingsMW;
 
-function queryProviderHandlerMW(req, res, next) {
+function updateProviderHandlerMW(req, res, next) {
   providerRepo =
     providerRepo ||
     require('../../../lib/repository/service-provider-repository')
       .serviceProviderRepositoryInstance;
-  queryProviderMW =
-    queryProviderMW || require('./query-provider-mw')(providerRepo);
-  return queryProviderMW(req, res, next);
+  updateProviderMW =
+    updateProviderMW || require('./update-service-provider-mw')(providerRepo);
+  return updateProviderMW(req, res, next);
 }
 
 function queryOfferingsHandlerMW(req, res, next) {
@@ -27,19 +27,18 @@ function queryOfferingsHandlerMW(req, res, next) {
     queryOfferingsMW || require('./query-offerings-mw')(offeringRepo);
   return queryOfferingsMW(req, res, next);
 }
-
 // Setup Express Server
 const app = express();
 app.use(bodyParser.json());
 
 // Generate Route with necessary middleware
-app.get(
-  '/provider/:providerId',
-  require('../../../lib/mw/user-mw'),
+app.post(
+  '/',
   require('../../../lib/mw/trace-id-mw'),
-  require('./setup-response-mw'),
-  queryProviderHandlerMW,
+  require('./convert-pubsub-message-mw'),
   queryOfferingsHandlerMW,
+  require('./build-service-listing-array'),
+  updateProviderHandlerMW,
   require('./success-mw')
 );
 

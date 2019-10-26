@@ -1,25 +1,18 @@
 'use strict';
 
 const PROVIDER_COLLECTION = 'ServiceProvider';
-const supportedSearchParams = ['city', 'state', 'zip', 'businessName'];
-const selectableMaps = ['address'];
-const { isEmpty } = require('lodash');
+const supportedSearchParams = [
+  'city',
+  'state',
+  'zip',
+  'businessName',
+  'styles'
+];
+const { omit, isEmpty } = require('lodash');
 
 class ServiceProviderRepository {
   constructor(firestore) {
     this.firestore = firestore;
-  }
-
-  /**
-   * Provides the list of document submaps which
-   * can be directly selected rather than getting
-   * the entire documents data
-   *
-   * @readonly
-   * @memberof ServiceProviderRepository
-   */
-  get selectableMaps() {
-    return selectableMaps;
   }
 
   /**
@@ -35,6 +28,15 @@ class ServiceProviderRepository {
       .add(provider);
 
     return document.id;
+  }
+
+  async update(providerId, provider) {
+    await this.firestore
+      .collection(PROVIDER_COLLECTION)
+      .doc(providerId)
+      .set(provider, { merge: true });
+
+    return;
   }
 
   /**
@@ -71,7 +73,7 @@ class ServiceProviderRepository {
    * @returns
    * @memberof ServiceProviderRepository
    */
-  async findByProviderId(providerId, options) {
+  async findByProviderId(providerId) {
     const documentReference = await this.firestore
       .collection(PROVIDER_COLLECTION)
       .doc(providerId)
@@ -81,14 +83,7 @@ class ServiceProviderRepository {
       return {};
     }
 
-    let provider = {};
-    if (isEmpty(options) || isEmpty(options.select)) {
-      provider = documentReference.data();
-    } else {
-      provider[options.select] = documentReference.get(options.select);
-    }
-
-    return provider;
+    return omit(documentReference.data(), 'styles');
   }
 
   /**
@@ -143,6 +138,10 @@ function buildSearchRequest(collection, options) {
 
   if (options.zip) {
     query = query.where('address.zip', '==', options.zip);
+  }
+
+  if (options.styles) {
+    query = query.where('styles', 'array-contains', options.styles);
   }
 
   return query;

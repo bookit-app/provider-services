@@ -5,7 +5,8 @@ const ServiceError = require('../../../lib/util/service-error');
 const { clone } = require('lodash');
 
 /**
- * Express Middleware to to trigger the provider query request
+ * Express Middleware to trigger the creation of the
+ * service in association the the provider. It assumes the data is pre-validated
  *
  * @param {Express.Request} req
  * @param {Express.Response} res
@@ -14,13 +15,13 @@ const { clone } = require('lodash');
  */
 module.exports = repository => async (req, res, next) => {
   try {
-    res.provider[
-      repository.collection
-    ] = await repository.findAllServiceOfferings(req.params.providerId);
+    await repository.update(req.body.providerId, {
+      styles: res.serviceOfferingStyles
+    });
 
     next();
   } catch (err) {
-    const error = clone(errors.systemError);
+    const error = clone(errors.updateFailed);
     error.message = err.message;
     next(new ServiceError(error));
   }

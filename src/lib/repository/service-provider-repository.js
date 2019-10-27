@@ -31,23 +31,21 @@ class ServiceProviderRepository {
   }
 
   update(providerId, provider) {
+    const documentReference = this.firestore
+      .collection(PROVIDER_COLLECTION)
+      .doc(providerId);
+
     return this.firestore.runTransaction(async t => {
-      const documentReference = await t
-        .collection(PROVIDER_COLLECTION)
-        .doc(providerId)
-        .get();
+      const document = await t.get(documentReference);
 
       // The provider has been deleted so nothing to update at this point
-      if (isEmpty(documentReference) || !documentReference.exists) {
+      if (isEmpty(document) || !document.exists) {
         const err = new Error();
         err.code = 'PROVIDER_NOT_EXISTING';
         return Promise.reject(err);
       }
 
-      await t
-        .collection(PROVIDER_COLLECTION)
-        .doc(providerId)
-        .set(provider, { merge: true });
+      await t.set(documentReference, provider, { merge: true });
     });
   }
 

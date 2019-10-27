@@ -239,7 +239,9 @@ describe('service-provider-repository unit tests', () => {
 
   context('update', () => {
     it('should resolve if provider exists', () => {
-      firestore.runTransaction.callsFake(async func => await func(firestore));
+      firestore.runTransaction.callsFake(
+        async func => await func(documentReference)
+      );
       documentReference.get.resolves({
         data: () => provider,
         get: option => provider[option],
@@ -249,12 +251,12 @@ describe('service-provider-repository unit tests', () => {
       documentReference.set.resolves();
       expect(repo.update('TEST', provider)).to.be.fulfilled.then(() => {
         expect(collectionReference.doc.calledWith('TEST')).to.be.true;
-        expect(documentReference.set.calledWith(provider)).to.be.true;
+        expect(documentReference.set.called).to.be.true;
       });
     });
 
     it('should reject if provider does not exists', () => {
-      firestore.runTransaction.callsFake(async func => await func(firestore));
+      firestore.runTransaction.callsFake(async func => await func(documentReference));
       documentReference.get.resolves({
         exists: false
       });

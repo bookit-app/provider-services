@@ -30,13 +30,25 @@ class ServiceProviderRepository {
     return document.id;
   }
 
-  async update(providerId, provider) {
-    await this.firestore
-      .collection(PROVIDER_COLLECTION)
-      .doc(providerId)
-      .set(provider, { merge: true });
+  update(providerId, provider) {
+    return this.firestore.runTransaction(async t => {
+      const documentReference = await t
+        .collection(PROVIDER_COLLECTION)
+        .doc(providerId)
+        .get();
 
-    return;
+      // The provider has been deleted so nothing to update at this point
+      if (isEmpty(documentReference) || !documentReference.exists) {
+        const err = new Error();
+        err.code = 'PROVIDER_NOT_EXISTING';
+        return Promise.reject(err);
+      }
+
+      await t
+        .collection(PROVIDER_COLLECTION)
+        .doc(providerId)
+        .set(provider, { merge: true });
+    });
   }
 
   /**

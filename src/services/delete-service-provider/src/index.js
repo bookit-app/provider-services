@@ -11,9 +11,9 @@ let providerRepo, deleteMW;
 function deleteHandlerMW(req, res, next) {
   providerRepo =
     providerRepo ||
-    require('../../../lib/repository/service-offering-repository')
-      .serviceOfferingRepositoryInstance;
-  deleteMW = deleteMW || require('./create-service-offering-mw')(providerRepo);
+    require('../../../lib/repository/service-provider-repository')
+      .serviceProviderRepositoryInstance;
+  deleteMW = deleteMW || require('./delete-provider-mw')(providerRepo);
   return deleteMW(req, res, next);
 }
 

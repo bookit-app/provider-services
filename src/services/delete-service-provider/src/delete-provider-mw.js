@@ -5,8 +5,8 @@ const ServiceError = require('../../../lib/util/service-error');
 const { clone } = require('lodash');
 
 /**
- * Express Middleware to trigger the creation of the
- * service in association the the provider. It assumes the data is pre-validated
+ * Express Middleware to trigger the delete of the
+ * service provider. It assumes the data is pre-validated
  *
  * @param {Express.Request} req
  * @param {Express.Response} res

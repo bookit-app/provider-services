@@ -57,26 +57,6 @@ describe('query-service-provider query-provider-mw unit tests', () => {
     expect(next.called).to.be.true;
   });
 
-  it('should just call next when select option does not apply', async () => {
-    req.providerQueryOptions.select = 'TEST';
-    repoStub.selectableMaps = [];
-
-    await mw(req, res, next);
-    expect(repoStub.findByProviderId.called).to.be.false;
-    expect(next.called).to.be.true;
-  });
-
-  it('should query when select option does apply', async () => {
-    req.providerQueryOptions.select = 'TEST';
-    repoStub.selectableMaps = ['TEST'];
-    repoStub.findByProviderId.resolves(provider);
-
-    await mw(req, res, next);
-    expect(repoStub.findByProviderId.calledWith('TEST-PROVIDER')).to.be.true;
-    expect(res.provider).to.deep.equal(provider);
-    expect(next.called).to.be.true;
-  });
-
   it('should call next with an error when repo query fails', async () => {
     repoStub.findByProviderId.rejects(new Error('FORCED-ERROR'));
     await mw(req, res, next);

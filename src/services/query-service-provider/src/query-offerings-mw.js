@@ -2,7 +2,7 @@
 
 const { errors } = require('../../../lib/constants');
 const ServiceError = require('../../../lib/util/service-error');
-const { clone } = require('lodash');
+const { clone, isEmpty } = require('lodash');
 
 /**
  * Express Middleware to to trigger the provider query request
@@ -13,10 +13,18 @@ const { clone } = require('lodash');
  * @returns
  */
 module.exports = repository => async (req, res, next) => {
+  if (isEmpty(res.provider)) {
+    next();
+    return;
+  }
+
   try {
-    res.provider[
-      repository.collection
-    ] = await repository.findAllServiceOfferings(req.params.providerId);
+    const services = await repository.findAllServiceOfferings(
+      req.params.providerId
+    );
+
+    // eslint-disable-next-line require-atomic-updates
+    res.provider[repository.collection] = services;
 
     next();
   } catch (err) {

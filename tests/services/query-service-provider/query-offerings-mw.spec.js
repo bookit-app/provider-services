@@ -44,10 +44,28 @@ const next = stub();
 
 describe('query-service-provider query-offering-mw unit tests', () => {
   afterEach(() => {
-    res.provider = {};
+    res.provider = {
+      businessName: 'Test Business',
+      ownerUid: '057KyiBA50aXpjjeVXKdyIIkOmf1',
+      ein: '43-2347647',
+      address: {
+        streetAddress: '1234 Home Street',
+        zip: '98765',
+        city: 'Palo Alto',
+        state: 'CA'
+      },
+      phoneNumber: '123-123-1234',
+      email: 'test@test.com'
+    };
     req.providerQueryOptions = {};
     next.resetHistory();
     repoStub.findAllServiceOfferings.resetHistory();
+  });
+
+  it('should call next if the res.provider is empty', async () => {
+    await mw({}, {}, next);
+    expect(next.called).to.be.true;
+    expect(repoStub.findAllServiceOfferings.called).to.be.false;
   });
 
   it('should populate the provider when found', async () => {

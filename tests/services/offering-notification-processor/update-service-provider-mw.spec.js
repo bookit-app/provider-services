@@ -58,4 +58,21 @@ describe('offering-notification-processor update-service-provider-mw unit-tests'
       expect(statusCode).to.equal(errors.updateFailed.statusCode);
     });
   });
+
+  it('should call next with no error on failure from repo when code is PROVIDER_NOT_EXISTING', () => {
+    const err = new Error();
+    err.code = 'PROVIDER_NOT_EXISTING';
+    repoStub.update.rejects(err);
+
+    expect(mw(req, res, next)).to.be.fulfilled.then(() => {
+      expect(repoStub.update.called).to.be.true;
+      expect(
+        repoStub.update.calledWith('TEST', {
+          styles: res.serviceOfferingStyles
+        })
+      ).to.be.true;
+      expect(next.called).to.be.true;
+      expect(next.calledWith()).to.be.true;
+    });
+  });
 });

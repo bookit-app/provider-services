@@ -21,6 +21,11 @@ module.exports = repository => async (req, res, next) => {
 
     next();
   } catch (err) {
+    if (err.code === 'PROVIDER_NOT_EXISTING') {
+      // Nothing to process so just allow the chain to complete
+      next();
+    }
+
     const error = clone(errors.updateFailed);
     error.message = err.message;
     next(new ServiceError(error));

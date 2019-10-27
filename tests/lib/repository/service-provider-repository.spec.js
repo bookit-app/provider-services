@@ -8,7 +8,6 @@ const {
   Firestore
 } = require('@google-cloud/firestore');
 const ServiceProviderRepository = require('../../../src/lib/repository/service-provider-repository');
-const { isEmpty } = require('lodash');
 
 const provider = {
   businessName: 'Test Business',
@@ -49,6 +48,7 @@ describe('service-provider-repository unit tests', () => {
     documentReference.collection.resetHistory();
     documentReference.create.resetHistory();
     collectionReference.add.resetHistory();
+    firestore.runTransaction.resetHistory();
     documentReference.delete.resetHistory();
   });
 
@@ -238,11 +238,32 @@ describe('service-provider-repository unit tests', () => {
   });
 
   context('update', () => {
-    it('should resolve', () => {
+    it('should resolve if provider exists', () => {
+      firestore.runTransaction.callsFake(async func => await func(firestore));
+      documentReference.get.resolves({
+        data: () => provider,
+        get: option => provider[option],
+        exists: true
+      });
+
       documentReference.set.resolves();
       expect(repo.update('TEST', provider)).to.be.fulfilled.then(() => {
         expect(collectionReference.doc.calledWith('TEST')).to.be.true;
         expect(documentReference.set.calledWith(provider)).to.be.true;
+      });
+    });
+
+    it('should reject if provider does not exists', () => {
+      firestore.runTransaction.callsFake(async func => await func(firestore));
+      documentReference.get.resolves({
+        exists: false
+      });
+
+      documentReference.set.resolves();
+      expect(repo.update('TEST', provider)).to.be.rejected.then(err => {
+        expect(collectionReference.doc.calledWith('TEST')).to.be.true;
+        expect(documentReference.set.called).to.be.false;
+        expect(err.code).to.equal('PROVIDER_NOT_EXISTING');
       });
     });
   });

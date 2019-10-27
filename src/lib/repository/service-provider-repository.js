@@ -30,6 +30,20 @@ class ServiceProviderRepository {
     return document.id;
   }
 
+  /**
+   * Trigger the provider delete processing
+   *
+   * @param {String} providerId
+   * @returns {void}
+   * @memberof ServiceProviderRepository
+   */
+  delete(providerId) {
+    return this.firestore
+      .collection(PROVIDER_COLLECTION)
+      .doc(providerId)
+      .delete();
+  }
+
   async update(providerId, provider) {
     await this.firestore
       .collection(PROVIDER_COLLECTION)

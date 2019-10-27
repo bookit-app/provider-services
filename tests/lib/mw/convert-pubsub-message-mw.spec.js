@@ -3,7 +3,7 @@
 const { expect } = require('chai');
 const { stub } = require('sinon');
 
-const mw = require('../../../src/services/offering-notification-processor/src/convert-pubsub-message-mw');
+const mw = require('../../../src/lib/mw/convert-pubsub-message-mw');
 
 describe('offering-notification-processor convert-pubsub-message-mw unit tests', () => {
   it('should convert the body from base64 to a JS object', () => {

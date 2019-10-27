@@ -2,10 +2,11 @@
 
 const { errors } = require('../../../lib/constants');
 const ServiceError = require('../../../lib/util/service-error');
-const { clone, isEmpty } = require('lodash');
+const { clone } = require('lodash');
 
 /**
- * Express Middleware to to trigger the provider query request
+ * Express Middleware to trigger the delete of the
+ * service provider. It assumes the data is pre-validated
  *
  * @param {Express.Request} req
  * @param {Express.Response} res
@@ -13,22 +14,11 @@ const { clone, isEmpty } = require('lodash');
  * @returns
  */
 module.exports = repository => async (req, res, next) => {
-  if (isEmpty(res.provider)) {
-    next();
-    return;
-  }
-
   try {
-    const services = await repository.findAllServiceOfferings(
-      req.params.providerId
-    );
-
-    // eslint-disable-next-line require-atomic-updates
-    res.provider[repository.collection] = services;
-
+    await repository.delete(req.params.providerId);
     next();
   } catch (err) {
-    const error = clone(errors.systemError);
+    const error = clone(errors.updateFailed);
     error.message = err.message;
     next(new ServiceError(error));
   }

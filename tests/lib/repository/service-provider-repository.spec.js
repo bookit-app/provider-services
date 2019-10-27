@@ -50,6 +50,7 @@ describe('service-provider-repository unit tests', () => {
     documentReference.create.resetHistory();
     collectionReference.add.resetHistory();
     firestore.runTransaction.resetHistory();
+    documentReference.delete.resetHistory();
   });
 
   context('create', () => {
@@ -264,6 +265,16 @@ describe('service-provider-repository unit tests', () => {
         expect(collectionReference.doc.calledWith('TEST')).to.be.true;
         expect(documentReference.set.called).to.be.false;
         expect(err.code).to.equal('PROVIDER_NOT_EXISTING');
+      });
+    });
+  });
+
+  context('delete', () => {
+    it('should resolve', () => {
+      documentReference.delete.resolves();
+      expect(repo.delete('TEST', provider)).to.be.fulfilled.then(() => {
+        expect(collectionReference.doc.calledWith('TEST')).to.be.true;
+        expect(documentReference.delete.called).to.be.true;
       });
     });
   });

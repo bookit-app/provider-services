@@ -58,6 +58,24 @@ steps:
     args: ["install"]
     dir: src/services/provider-search
 
+  # delete-service-provider: dependency installation
+  - name: "node:10.16.3"
+    id: delete-service-provider-install
+    waitFor:
+      - root-install
+    entrypoint: npm
+    args: ["install"]
+    dir: src/services/delete-service-provider
+
+  # provider-delete-notification-processor: dependency installation
+  - name: "node:10.16.3"
+    id: provider-delete-notification-processor-install
+    waitFor:
+      - root-install
+    entrypoint: npm
+    args: ["install"]
+    dir: src/services/provider-delete-notification-processor
+
   # Run Lint
   - name: "node:10.16.3"
     id: lint
@@ -198,6 +216,50 @@ steps:
       - build-provider-search
     args: ["push", "gcr.io/sweng-581-capstone/provider-search:0.0.1"]
 
+  # delete-service-provider: Build docker image
+  - name: "gcr.io/cloud-builders/docker"
+    id: build-delete-service-provider
+    waitFor:
+      - test-unit
+    args:
+      - build
+      - --build-arg
+      - service=delete-service-provider
+      - -t
+      - gcr.io/sweng-581-capstone/delete-service-provider:0.0.1
+      - .
+
+  # delete-service-provider: Push docker image
+  - name: "gcr.io/cloud-builders/docker"
+    id: push-delete-service-provider
+    waitFor:
+      - build-delete-service-provider
+    args: ["push", "gcr.io/sweng-581-capstone/delete-service-provider:0.0.1"]
+
+  # provider-delete-notification-processor: Build docker image
+  - name: "gcr.io/cloud-builders/docker"
+    id: build-provider-delete-notification-processor
+    waitFor:
+      - test-unit
+    args:
+      - build
+      - --build-arg
+      - service=provider-delete-notification-processor
+      - -t
+      - gcr.io/sweng-581-capstone/provider-delete-notification-processor:0.0.1
+      - .
+
+  # provider-delete-notification-processor: Push docker image
+  - name: "gcr.io/cloud-builders/docker"
+    id: push-provider-delete-notification-processor
+    waitFor:
+      - build-provider-delete-notification-processor
+    args:
+      [
+        "push",
+        "gcr.io/sweng-581-capstone/provider-delete-notification-processor:0.0.1",
+      ]
+
   # create-service-provider: Deploy to cloud run
   - name: "gcr.io/cloud-builders/gcloud"
     waitFor:
@@ -263,7 +325,7 @@ steps:
       - --region=us-central1
       - --platform=managed
 
-  # provider-search:: Deploy to cloud run
+  # provider-search: Deploy to cloud run
   - name: "gcr.io/cloud-builders/gcloud"
     waitFor:
       - push-provider-search
@@ -276,6 +338,32 @@ steps:
       - --region=us-central1
       - --platform=managed
 
+  # delete-service-provider: Deploy to cloud run
+  - name: "gcr.io/cloud-builders/gcloud"
+    waitFor:
+      - push-delete-service-provider
+    args:
+      - beta
+      - run
+      - deploy
+      - delete-service-provider
+      - --image=gcr.io/sweng-581-capstone/delete-service-provider:0.0.1
+      - --region=us-central1
+      - --platform=managed
+
+  # provider-delete-notification-processor: Deploy to cloud run
+  - name: "gcr.io/cloud-builders/gcloud"
+    waitFor:
+      - push-provider-delete-notification-processor
+    args:
+      - beta
+      - run
+      - deploy
+      - provider-delete-notification-processor
+      - --image=gcr.io/sweng-581-capstone/provider-delete-notification-processor:0.0.1
+      - --region=us-central1
+      - --platform=managed
+
 images:
   - "gcr.io/sweng-581-capstone/create-service-provider"
   - "gcr.io/sweng-581-capstone/create-service-offering:0.0.1"
@@ -283,3 +371,5 @@ images:
   - "gcr.io/sweng-581-capstone/query-service-provider:0.0.1"
   - "gcr.io/sweng-581-capstone/service-provider-config-service:0.0.1"
   - "gcr.io/sweng-581-capstone/provider-search:0.0.1"
+  - "gcr.io/sweng-581-capstone/delete-service-provider:0.0.1"
+  - "gcr.io/sweng-581-capstone/provider-delete-notification-processor:0.0.1"

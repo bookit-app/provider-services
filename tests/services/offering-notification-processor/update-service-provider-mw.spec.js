@@ -6,7 +6,7 @@ const { errors } = require('../../../src/lib/constants');
 const repoStub = {
   update: stub()
 };
-const mw = require('../../../src/services//offering-notification-processor/src/update-service-provider-mw')(
+const mw = require('../../../src/services/offering-notification-processor/src/update-service-provider-mw')(
   repoStub
 );
 

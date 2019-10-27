@@ -52,6 +52,20 @@ class ServiceProviderRepository {
   }
 
   /**
+   * Trigger the provider delete processing
+   *
+   * @param {String} providerId
+   * @returns {void}
+   * @memberof ServiceProviderRepository
+   */
+  delete(providerId) {
+    return this.firestore
+      .collection(PROVIDER_COLLECTION)
+      .doc(providerId)
+      .delete();
+  }
+
+  /**
    * Query for a provider based on the EIN code
    * it is assumed that only 1 service provider
    * can exist with this code therefore return

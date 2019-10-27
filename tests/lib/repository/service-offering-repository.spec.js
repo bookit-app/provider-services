@@ -5,22 +5,24 @@ const { createStubInstance } = require('sinon');
 const {
   CollectionReference,
   DocumentReference,
-  Firestore
+  Firestore,
+  WriteBatch
 } = require('@google-cloud/firestore');
 const ServiceOfferingRepository = require('../../../src/lib/repository/service-offering-repository');
 
 describe('service-offering-repository unit tests', () => {
   let repo, firestore;
-  let collectionReference, documentReference;
+  let collectionReference, documentReference, writeBatchReference;
 
   before(() => {
     firestore = createStubInstance(Firestore);
     collectionReference = createStubInstance(CollectionReference);
     documentReference = createStubInstance(DocumentReference);
+    writeBatchReference = createStubInstance(WriteBatch);
     collectionReference.doc.returns(documentReference);
     documentReference.collection.returns(collectionReference);
     firestore.collection.returns(collectionReference);
-
+    firestore.batch.returns(writeBatchReference);
     repo = new ServiceOfferingRepository(firestore);
   });
 
@@ -34,6 +36,9 @@ describe('service-offering-repository unit tests', () => {
     documentReference.collection.resetHistory();
     documentReference.create.resetHistory();
     collectionReference.add.resetHistory();
+    writeBatchReference.delete.resetHistory();
+    writeBatchReference.commit.resetHistory();
+    firestore.batch.resetHistory();
   });
 
   context('create', () => {
@@ -161,6 +166,48 @@ describe('service-offering-repository unit tests', () => {
       ).to.be.fulfilled.then(results => {
         expect(results).to.deep.equal([]);
       });
+    });
+  });
+
+  context('deleteAllForProvider', () => {
+    const services = [
+      {
+        ref: {}
+      },
+      {
+        ref: {}
+      }
+    ];
+    it('should trigger the delete in batch', () => {
+      const querySnapshotSub = {
+        forEach: func => services.forEach(func),
+        size: 2
+      };
+
+      collectionReference.get.resolves(querySnapshotSub);
+      writeBatchReference.delete.returns();
+      writeBatchReference.commit.resolves();
+      expect(repo.deleteAllForProvider('TEST-PROVIDER')).to.be.fulfilled.then(
+        () => {
+          expect(firestore.batch.called).to.be.true;
+          expect(writeBatchReference.delete.callCount).to.equal(2);
+          expect(writeBatchReference.commit.called).to.be.true;
+        }
+      );
+    });
+
+    it('should do nothing if no services exist', () => {
+      const querySnapshotSub = {
+        docs: [],
+        size: 0
+      };
+
+      collectionReference.get.resolves(querySnapshotSub);
+      expect(repo.deleteAllForProvider('TEST-PROVIDER')).to.be.fulfilled.then(
+        () => {
+          expect(firestore.batch.called).to.be.false;
+        }
+      );
     });
   });
 });

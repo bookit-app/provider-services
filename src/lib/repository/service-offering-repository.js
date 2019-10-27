@@ -3,6 +3,7 @@
 const PROVIDER_COLLECTION = require('./service-provider-repository')
   .COLLECTION_NAME;
 const SERVICES_SUBCOLLECTION = 'services';
+const logger = require('../util/logger');
 
 class ServiceOfferingRepository {
   constructor(firestore) {
@@ -59,6 +60,36 @@ class ServiceOfferingRepository {
       .get();
 
     return querySnapshot.docs.map(doc => doc.data());
+  }
+
+  /**
+   * Delete the entire collection of services for
+   * the provided provider Id
+   *
+   * @param {*} providerId
+   * @memberof ServiceOfferingRepository
+   */
+  async deleteAllForProvider(providerId) {
+    const querySnapshot = await this.firestore
+      .collection(PROVIDER_COLLECTION)
+      .doc(providerId)
+      .collection(SERVICES_SUBCOLLECTION)
+      .get();
+
+    if (querySnapshot.size == 0) {
+      return;
+    }
+
+    logger.info(
+      `Deleting ${querySnapshot.size} service offerings for provider ${providerId}`
+    );
+    
+    const batch = this.firestore.batch();
+    querySnapshot.forEach(document => {
+      batch.delete(document.ref);
+    });
+
+    await batch.commit();
   }
 }
 

@@ -6,27 +6,18 @@ const bodyParser = require('body-parser');
 // These will be lazily loaded when needed.
 // Per Cloud Run best practice we should lazily load
 // references https://cloud.google.com/run/docs/tips
-let providerRepo, offeringRepo, updateProviderMW, queryOfferingsMW;
+let providerRepo, deleteMW;
 
-function updateProviderHandlerMW(req, res, next) {
+function deleteHandlerMW(req, res, next) {
   providerRepo =
     providerRepo ||
-    require('../../../lib/repository/service-provider-repository')
-      .serviceProviderRepositoryInstance;
-  updateProviderMW =
-    updateProviderMW || require('./update-service-provider-mw')(providerRepo);
-  return updateProviderMW(req, res, next);
-}
-
-function queryOfferingsHandlerMW(req, res, next) {
-  offeringRepo =
-    offeringRepo ||
     require('../../../lib/repository/service-offering-repository')
       .serviceOfferingRepositoryInstance;
-  queryOfferingsMW =
-    queryOfferingsMW || require('./query-offerings-mw')(offeringRepo);
-  return queryOfferingsMW(req, res, next);
+  deleteMW =
+    deleteMW || require('./delete-provider-dependencies-mw')(providerRepo);
+  return deleteMW(req, res, next);
 }
+
 // Setup Express Server
 const app = express();
 app.use(bodyParser.json());
@@ -36,9 +27,7 @@ app.post(
   '/',
   require('../../../lib/mw/trace-id-mw'),
   require('../../../lib/mw/convert-pubsub-message-mw'),
-  queryOfferingsHandlerMW,
-  require('./build-service-listing-array'),
-  updateProviderHandlerMW,
+  deleteHandlerMW,
   require('./success-mw')
 );
 

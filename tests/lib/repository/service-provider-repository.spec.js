@@ -8,7 +8,6 @@ const {
   Firestore
 } = require('@google-cloud/firestore');
 const ServiceProviderRepository = require('../../../src/lib/repository/service-provider-repository');
-const { isEmpty } = require('lodash');
 
 const provider = {
   businessName: 'Test Business',

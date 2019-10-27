@@ -49,6 +49,7 @@ describe('service-provider-repository unit tests', () => {
     documentReference.collection.resetHistory();
     documentReference.create.resetHistory();
     collectionReference.add.resetHistory();
+    documentReference.delete.resetHistory();
   });
 
   context('create', () => {
@@ -242,6 +243,16 @@ describe('service-provider-repository unit tests', () => {
       expect(repo.update('TEST', provider)).to.be.fulfilled.then(() => {
         expect(collectionReference.doc.calledWith('TEST')).to.be.true;
         expect(documentReference.set.calledWith(provider)).to.be.true;
+      });
+    });
+  });
+
+  context('delete', () => {
+    it('should resolve', () => {
+      documentReference.delete.resolves();
+      expect(repo.delete('TEST', provider)).to.be.fulfilled.then(() => {
+        expect(collectionReference.doc.calledWith('TEST')).to.be.true;
+        expect(documentReference.delete.called).to.be.true;
       });
     });
   });

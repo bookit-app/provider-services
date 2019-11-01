@@ -125,13 +125,15 @@ describe('service-offering-repository unit tests', () => {
         currency: 'USD',
         price: 40.58,
         styleId: 'FADE',
-        description: 'Beard Trim'
+        description: 'Beard Trim',
+        serviceId: 'SERVICE1'
       },
       {
         styleId: 'CUSTOM',
         description: 'Beard Trim',
         currency: 'USD',
-        price: 40.58
+        price: 40.58,
+        serviceId: 'SERVICE2'
       }
     ];
 
@@ -217,7 +219,8 @@ describe('service-offering-repository unit tests', () => {
         styleId: 'FADE',
         description: 'We give the best fade with super highly trained staff.',
         price: 15.0,
-        currency: 'USD'
+        currency: 'USD',
+        serviceId: 'SERVICE1'
       };
 
       documentReference.set.resolves();

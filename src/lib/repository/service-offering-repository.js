@@ -77,7 +77,11 @@ class ServiceOfferingRepository {
       .collection(SERVICES_SUBCOLLECTION)
       .get();
 
-    return querySnapshot.docs.map(doc => doc.data());
+    return querySnapshot.docs.map(doc => {
+      const service = doc.data();
+      service.serviceId = doc.id;
+      return service;
+    });
   }
 
   /**

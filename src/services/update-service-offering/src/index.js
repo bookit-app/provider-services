@@ -32,7 +32,7 @@ app.use(bodyParser.json());
 // Generate Route with necessary middleware
 app.patch(
   '/provider/:providerId/services/:serviceId',
-  //require('../../../lib/mw/user-mw'),
+  require('../../../lib/mw/user-mw'),
   require('../../../lib/mw/trace-id-mw'),
   validateMW,
   updateHandlerMW,

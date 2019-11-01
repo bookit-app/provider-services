@@ -45,6 +45,24 @@ class ServiceOfferingRepository {
   }
 
   /**
+   * Update the service for the provider
+   *
+   * @param {String} providerId
+   * @param {String} serviceId
+   * @param {*} service
+   * @returns {void}
+   * @memberof ServiceOfferingRepository
+   */
+  update(providerId, serviceId, service) {
+    return this.firestore
+      .collection(PROVIDER_COLLECTION)
+      .doc(providerId)
+      .collection(SERVICES_SUBCOLLECTION)
+      .doc(serviceId)
+      .set(service, { merge: true });
+  }
+
+  /**
    * Returns an array containing all the services
    * related to the given provider
    *
@@ -83,7 +101,7 @@ class ServiceOfferingRepository {
     logger.info(
       `Deleting ${querySnapshot.size} service offerings for provider ${providerId}`
     );
-    
+
     const batch = this.firestore.batch();
     querySnapshot.forEach(document => {
       batch.delete(document.ref);

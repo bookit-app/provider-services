@@ -210,4 +210,24 @@ describe('service-offering-repository unit tests', () => {
       );
     });
   });
+
+  context('update', () => {
+    it('should resolve', () => {
+      const service = {
+        styleId: 'FADE',
+        description: 'We give the best fade with super highly trained staff.',
+        price: 15.0,
+        currency: 'USD'
+      };
+
+      documentReference.set.resolves();
+      expect(
+        repo.update('TEST', 'TEST-OFFERING', service)
+      ).to.be.fulfilled.then(() => {
+        expect(collectionReference.doc.calledWith('TEST')).to.be.true;
+        expect(collectionReference.doc.calledWith('TEST-OFFERING')).to.be.true;
+        expect(documentReference.set.called).to.be.true;
+      });
+    });
+  });
 });

@@ -5,6 +5,7 @@ module.exports.schema = {
   $id: 'http://bookit.com/schemas/update-service-offering-schema.json',
   type: 'object',
   required: ['description', 'price'],
+  additionalProperties: false,
   properties: {
     description: {
       type: 'string'

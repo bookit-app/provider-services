@@ -13,7 +13,7 @@ function updateHandlerMW(req, res, next) {
     repo ||
     require('../../../lib/repository/service-offering-repository')
       .serviceOfferingRepositoryInstance;
-  updateMW = updateMW || require('./provider-search-mw')(repo);
+  updateMW = updateMW || require('./update-service-offering-mw')(repo);
   return updateMW(req, res, next);
 }
 
@@ -32,7 +32,7 @@ app.use(bodyParser.json());
 // Generate Route with necessary middleware
 app.patch(
   '/provider/:providerId/services/:serviceId',
-  require('../../../lib/mw/user-mw'),
+  //require('../../../lib/mw/user-mw'),
   require('../../../lib/mw/trace-id-mw'),
   validateMW,
   updateHandlerMW,

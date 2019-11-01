@@ -22,6 +22,15 @@ steps:
     args: ["install"]
     dir: src/services/create-service-offering
 
+  # update-service-offering: dependency installation
+  - name: "node:10.16.3"
+    id: update-service-offering-install
+    waitFor:
+      - root-install
+    entrypoint: npm
+    args: ["install"]
+    dir: src/services/update-service-offering
+
   # offering-notification-processor: dependency installation
   - name: "node:10.16.3"
     id: offering-notification-processor-install
@@ -127,6 +136,26 @@ steps:
     waitFor:
       - build-create-service-offering
     args: ["push", "gcr.io/sweng-581-capstone/create-service-offering:0.0.1"]
+
+  # update-service-offering: Build docker image
+  - name: "gcr.io/cloud-builders/docker"
+    id: build-update-service-offering
+    waitFor:
+      - test-unit
+    args:
+      - build
+      - --build-arg
+      - service=update-service-offering
+      - -t
+      - gcr.io/sweng-581-capstone/update-service-offering:0.0.1
+      - .
+
+  # update-service-offering: Push docker image
+  - name: "gcr.io/cloud-builders/docker"
+    id: push-update-service-offering
+    waitFor:
+      - build-update-service-offering
+    args: ["push", "gcr.io/sweng-581-capstone/update-service-offering:0.0.1"]
 
   # offering-notification-processor: Build docker image
   - name: "gcr.io/cloud-builders/docker"
@@ -286,6 +315,19 @@ steps:
       - --region=us-central1
       - --platform=managed
 
+  # update-service-offering: Deploy to cloud run
+  - name: "gcr.io/cloud-builders/gcloud"
+    waitFor:
+      - push-update-service-offering
+    args:
+      - beta
+      - run
+      - deploy
+      - update-service-offering
+      - --image=gcr.io/sweng-581-capstone/update-service-offering:0.0.1
+      - --region=us-central1
+      - --platform=managed
+
   # offering-notification-processor: Deploy to cloud run
   - name: "gcr.io/cloud-builders/gcloud"
     waitFor:
@@ -367,6 +409,7 @@ steps:
 images:
   - "gcr.io/sweng-581-capstone/create-service-provider"
   - "gcr.io/sweng-581-capstone/create-service-offering:0.0.1"
+  - "gcr.io/sweng-581-capstone/update-service-offering:0.0.1"
   - "gcr.io/sweng-581-capstone/offering-notification-processor:0.0.1"
   - "gcr.io/sweng-581-capstone/query-service-provider:0.0.1"
   - "gcr.io/sweng-581-capstone/service-provider-config-service:0.0.1"

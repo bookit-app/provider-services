@@ -1,6 +1,6 @@
 {
-  "name": "service-offering-create",
-  "description": "Create Service Offering",
+  "name": "service-offering-update",
+  "description": "Update Service Offering",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js"

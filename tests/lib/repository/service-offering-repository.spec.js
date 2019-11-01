@@ -98,8 +98,7 @@ describe('service-offering-repository unit tests', () => {
       collectionReference.add.resolves({ id: 'TEST' });
       const service = {
         description: 'We give the best fade with super highly trained staff.',
-        price: 15.0,
-        styleId: 'NOT-CUSTOM'
+        price: 15.0
       };
 
       expect(repo.create('TEST-PROVIDER', service)).to.be.fulfilled.then(

@@ -35,9 +35,10 @@ app.use(bodyParser.json());
 app.post(
   '/',
   require('../../../lib/mw/trace-id-mw'),
-  require('../../../lib/mw/convert-pubsub-message-mw'),
+  //require('../../../lib/mw/convert-pubsub-message-mw'),
   queryOfferingsHandlerMW,
   require('./build-service-listing-array'),
+  require('./build-price-ranges-array'),
   updateProviderHandlerMW,
   require('./success-mw')
 );

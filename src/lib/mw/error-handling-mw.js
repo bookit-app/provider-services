@@ -1,5 +1,6 @@
 'use strict';
 
+const { INTERNAL_SERVER_ERROR } = require('../constants').statusCodes;
 /**
  * Express error middleware to properly format
  * a json response when errors are generated
@@ -14,8 +15,8 @@
 module.exports = (err, req, res, next) => {
   const { errorCode, statusCode, message } = err;
 
-  res.status(statusCode).json({
-    errorCode,
+  res.status(statusCode || INTERNAL_SERVER_ERROR).json({
+    errorCode: errorCode || 'UNKNOWN',
     message
   });
 };

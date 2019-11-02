@@ -11,10 +11,12 @@ module.exports = (req, res, next) => {
   if (!isEmpty(req.query)) {
     req.searchOptions = supportedSearchParams.reduce(
       (options, supportedParam) => {
-        const value = req.query[supportedParam];
+        const value = supportedParam.expansionFunction(
+          req.query[supportedParam.name]
+        );
 
         if (value) {
-          options[supportedParam] = value;
+          options[supportedParam.name] = value;
         }
 
         return options;

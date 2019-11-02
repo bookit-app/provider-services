@@ -11,16 +11,17 @@ const ServiceProviderRepository = require('../../../src/lib/repository/service-p
 
 const provider = {
   businessName: 'Test Business',
-  ownerUid: '057KyiBA50aXpjjeVXKdyIIkOmf1',
-  ein: '43-2347647',
   address: {
     streetAddress: '1234 Home Street',
     zip: '98765',
     city: 'Palo Alto',
     state: 'CA'
   },
-  phoneNumber: '123-123-1234',
-  email: 'test@test.com'
+  priceRanges: ['$', '$$$'],
+  serviceSpecificPriceRanges: {
+    FADE: ['$'],
+    UPDO: ['$$']
+  }
 };
 
 describe('service-provider-repository unit tests', () => {
@@ -139,12 +140,12 @@ describe('service-provider-repository unit tests', () => {
       zip: '98765',
       state: 'CA',
       businessName: 'TEST',
-      city: 'TEST',
-      styles: 'FADE'
+      city: 'TEST'
     };
 
     const results = [
       {
+        id: 'provider-id',
         data: () => provider
       }
     ];
@@ -152,7 +153,7 @@ describe('service-provider-repository unit tests', () => {
     it('should return the results', () => {
       const snapshot = {
         empty: false,
-        forEach: func => results.forEach(func)
+        docs: results
       };
 
       const query = collectionReference;
@@ -163,7 +164,14 @@ describe('service-provider-repository unit tests', () => {
       firestore.collection.returns(query);
 
       expect(repo.search(options)).to.be.fulfilled.then(data => {
-        expect(data).to.deep.equal([provider]);
+        expect(data).to.deep.equal([
+          {
+            providerId: 'provider-id',
+            address: provider.address,
+            businessName: provider.businessName,
+            priceRanges: provider.priceRanges
+          }
+        ]);
         expect(query.where.calledWith('address.zip')).to.be.true;
         expect(query.where.calledWith('address.state')).to.be.true;
         expect(query.where.calledWith('address.city')).to.be.true;
@@ -195,7 +203,7 @@ describe('service-provider-repository unit tests', () => {
     it('should return and all records if empty options are provided', () => {
       const snapshot = {
         empty: false,
-        forEach: func => results.forEach(func)
+        docs: results
       };
 
       const query = collectionReference;
@@ -206,7 +214,14 @@ describe('service-provider-repository unit tests', () => {
       firestore.collection.returns(query);
 
       expect(repo.search({})).to.be.fulfilled.then(data => {
-        expect(data).to.deep.equal([provider]);
+        expect(data).to.deep.equal([
+          {
+            providerId: 'provider-id',
+            address: provider.address,
+            businessName: provider.businessName,
+            priceRanges: provider.priceRanges
+          }
+        ]);
         expect(query.where.calledWith('address.zip')).to.be.false;
         expect(query.where.calledWith('address.state')).to.be.false;
         expect(query.where.calledWith('address.city')).to.be.false;
@@ -217,7 +232,7 @@ describe('service-provider-repository unit tests', () => {
     it('should return and all records if no options are provided', () => {
       const snapshot = {
         empty: false,
-        forEach: func => results.forEach(func)
+        docs: results
       };
 
       const query = collectionReference;
@@ -228,11 +243,176 @@ describe('service-provider-repository unit tests', () => {
       firestore.collection.returns(query);
 
       expect(repo.search()).to.be.fulfilled.then(data => {
-        expect(data).to.deep.equal([provider]);
+        expect(data).to.deep.equal([
+          {
+            providerId: 'provider-id',
+            address: provider.address,
+            businessName: provider.businessName,
+            priceRanges: provider.priceRanges
+          }
+        ]);
         expect(query.where.calledWith('address.zip')).to.be.false;
         expect(query.where.calledWith('address.state')).to.be.false;
         expect(query.where.calledWith('address.city')).to.be.false;
         expect(query.where.calledWith('businessName')).to.be.false;
+      });
+    });
+
+    it('should filter based on overall price ranges as no style is provided', () => {
+      const providerToBeFiltered = {
+        businessName: 'Test Business',
+        address: {
+          streetAddress: '1234 Home Street',
+          zip: '98765',
+          city: 'Palo Alto',
+          state: 'CA'
+        },
+        priceRanges: ['$$$$'],
+        serviceSpecificPriceRanges: {
+          FADE: ['$$$$']
+        }
+      };
+
+      const options = {
+        priceRange: '$$'
+      };
+
+      const results = [
+        {
+          id: 'providerNotFiltered',
+          data: () => provider
+        },
+        {
+          id: 'provideFiltered',
+          data: () => providerToBeFiltered
+        }
+      ];
+
+      const snapshot = {
+        empty: false,
+        docs: results
+      };
+
+      const query = collectionReference;
+      query.where.returns(query);
+      query.select.returns(query);
+      query.get.resolves(snapshot);
+
+      firestore.collection.returns(query);
+
+      expect(repo.search(options)).to.be.fulfilled.then(data => {
+        expect(data.length).to.equal(1);
+        expect(data).to.deep.equal([
+          {
+            providerId: 'providerNotFiltered',
+            address: provider.address,
+            businessName: provider.businessName,
+            priceRanges: provider.priceRanges
+          }
+        ]);
+      });
+    });
+
+    it('should filter based on overall offering price ranges as style is provided', () => {
+      const providerToBeFiltered = {
+        businessName: 'Test Business',
+        address: {
+          streetAddress: '1234 Home Street',
+          zip: '98765',
+          city: 'Palo Alto',
+          state: 'CA'
+        },
+        priceRanges: ['$$$$'],
+        serviceSpecificPriceRanges: {
+          FADE: ['$$$$']
+        }
+      };
+
+      const options = {
+        priceRange: '$$',
+        styles: 'FADE'
+      };
+
+      const results = [
+        {
+          id: 'providerNotFiltered',
+          data: () => provider
+        },
+        {
+          id: 'provideFiltered',
+          data: () => providerToBeFiltered
+        }
+      ];
+
+      const snapshot = {
+        empty: false,
+        docs: results
+      };
+
+      const query = collectionReference;
+      query.where.returns(query);
+      query.select.returns(query);
+      query.get.resolves(snapshot);
+
+      firestore.collection.returns(query);
+
+      expect(repo.search(options)).to.be.fulfilled.then(data => {
+        expect(data.length).to.equal(1);
+        expect(data).to.deep.equal([
+          {
+            providerId: 'providerNotFiltered',
+            address: provider.address,
+            businessName: provider.businessName,
+            priceRanges: provider.serviceSpecificPriceRanges.FADE
+          }
+        ]);
+      });
+    });
+
+    it('should apply search if data is missing on document for price ranges it will just not be considered', () => {
+      const providerMissingData = {
+        businessName: 'Test Business',
+        address: {
+          streetAddress: '1234 Home Street',
+          zip: '98765',
+          city: 'Palo Alto',
+          state: 'CA'
+        }
+      };
+
+      const options = {
+        styles: 'FADE'
+      };
+
+      const results = [
+        {
+          id: 'providerMissingData',
+          data: () => providerMissingData
+        }
+      ];
+
+      const snapshot = {
+        empty: false,
+        docs: results
+      };
+
+      const query = collectionReference;
+      query.where.returns(query);
+      query.select.returns(query);
+      query.get.resolves(snapshot);
+
+      firestore.collection.returns(query);
+
+      expect(repo.search(options)).to.be.fulfilled.then(data => {
+        expect(data.length).to.equal(1);
+        expect(data).to.deep.equal([
+          {
+            providerId: 'providerMissingData',
+            address: provider.address,
+            businessName: provider.businessName,
+            priceRanges: []
+          }
+        ]);
       });
     });
   });
@@ -256,7 +436,9 @@ describe('service-provider-repository unit tests', () => {
     });
 
     it('should reject if provider does not exists', () => {
-      firestore.runTransaction.callsFake(async func => await func(documentReference));
+      firestore.runTransaction.callsFake(
+        async func => await func(documentReference)
+      );
       documentReference.get.resolves({
         exists: false
       });

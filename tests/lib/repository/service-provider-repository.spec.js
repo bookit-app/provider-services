@@ -145,6 +145,7 @@ describe('service-provider-repository unit tests', () => {
 
     const results = [
       {
+        id: 'provider-id',
         data: () => provider
       }
     ];
@@ -165,6 +166,7 @@ describe('service-provider-repository unit tests', () => {
       expect(repo.search(options)).to.be.fulfilled.then(data => {
         expect(data).to.deep.equal([
           {
+            providerId: 'provider-id',
             address: provider.address,
             businessName: provider.businessName,
             priceRanges: provider.priceRanges
@@ -214,6 +216,7 @@ describe('service-provider-repository unit tests', () => {
       expect(repo.search({})).to.be.fulfilled.then(data => {
         expect(data).to.deep.equal([
           {
+            providerId: 'provider-id',
             address: provider.address,
             businessName: provider.businessName,
             priceRanges: provider.priceRanges
@@ -242,6 +245,7 @@ describe('service-provider-repository unit tests', () => {
       expect(repo.search()).to.be.fulfilled.then(data => {
         expect(data).to.deep.equal([
           {
+            providerId: 'provider-id',
             address: provider.address,
             businessName: provider.businessName,
             priceRanges: provider.priceRanges
@@ -275,9 +279,11 @@ describe('service-provider-repository unit tests', () => {
 
       const results = [
         {
+          id: 'providerNotFiltered',
           data: () => provider
         },
         {
+          id: 'provideFiltered',
           data: () => providerToBeFiltered
         }
       ];
@@ -298,6 +304,7 @@ describe('service-provider-repository unit tests', () => {
         expect(data.length).to.equal(1);
         expect(data).to.deep.equal([
           {
+            providerId: 'providerNotFiltered',
             address: provider.address,
             businessName: provider.businessName,
             priceRanges: provider.priceRanges
@@ -328,9 +335,11 @@ describe('service-provider-repository unit tests', () => {
 
       const results = [
         {
+          id: 'providerNotFiltered',
           data: () => provider
         },
         {
+          id: 'provideFiltered',
           data: () => providerToBeFiltered
         }
       ];
@@ -351,6 +360,7 @@ describe('service-provider-repository unit tests', () => {
         expect(data.length).to.equal(1);
         expect(data).to.deep.equal([
           {
+            providerId: 'providerNotFiltered',
             address: provider.address,
             businessName: provider.businessName,
             priceRanges: provider.serviceSpecificPriceRanges.FADE
@@ -376,6 +386,7 @@ describe('service-provider-repository unit tests', () => {
 
       const results = [
         {
+          id: 'providerMissingData',
           data: () => providerMissingData
         }
       ];
@@ -396,6 +407,7 @@ describe('service-provider-repository unit tests', () => {
         expect(data.length).to.equal(1);
         expect(data).to.deep.equal([
           {
+            providerId: 'providerMissingData',
             address: provider.address,
             businessName: provider.businessName,
             priceRanges: []

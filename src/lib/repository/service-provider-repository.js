@@ -161,8 +161,8 @@ function processSearchResultItem(documentSnapshot, filterOptions) {
       : data.priceRanges) || [];
 
   if (isWithinPriceRange(rangesToUse, filterOptions.priceRange)) {
-    data.providerId = documentSnapshot.id;
     return {
+      providerId: documentSnapshot.id,
       businessName: data.businessName,
       address: data.address,
       priceRanges: rangesToUse

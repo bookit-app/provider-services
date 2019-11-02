@@ -50,7 +50,7 @@ describe('create-service-offering service unit-tests', () => {
           currency: 'USD'
         })
       ).to.be.true;
-      expect(res.location.calledWith('/provider/TEST-PROVIDER/service/DOC-ID'))
+      expect(res.location.calledWith('/provider/TEST-PROVIDER/services/DOC-ID'))
         .to.be.true;
     });
   });

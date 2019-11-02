@@ -17,7 +17,8 @@ const req = {
 };
 
 const res = {
-  serviceOfferingStyles: ['FADE', 'CUSTOM']
+  serviceOfferingStyles: ['FADE', 'CUSTOM'],
+  serviceOfferingPriceRanges: ['$', '$$']
 };
 
 const next = stub();
@@ -34,7 +35,8 @@ describe('offering-notification-processor update-service-provider-mw unit-tests'
       expect(repoStub.update.called).to.be.true;
       expect(
         repoStub.update.calledWith('TEST', {
-          styles: res.serviceOfferingStyles
+          styles: res.serviceOfferingStyles,
+          priceRanges: res.serviceOfferingPriceRanges
         })
       ).to.be.true;
       expect(next.called).to.be.true;
@@ -48,7 +50,8 @@ describe('offering-notification-processor update-service-provider-mw unit-tests'
       expect(repoStub.update.called).to.be.true;
       expect(
         repoStub.update.calledWith('TEST', {
-          styles: res.serviceOfferingStyles
+          styles: res.serviceOfferingStyles,
+          priceRanges: res.serviceOfferingPriceRanges
         })
       ).to.be.true;
       expect(next.called).to.be.true;
@@ -68,7 +71,8 @@ describe('offering-notification-processor update-service-provider-mw unit-tests'
       expect(repoStub.update.called).to.be.true;
       expect(
         repoStub.update.calledWith('TEST', {
-          styles: res.serviceOfferingStyles
+          styles: res.serviceOfferingStyles,
+          priceRanges: res.serviceOfferingPriceRanges
         })
       ).to.be.true;
       expect(next.called).to.be.true;

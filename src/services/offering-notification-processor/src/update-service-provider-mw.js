@@ -16,7 +16,8 @@ const { clone } = require('lodash');
 module.exports = repository => async (req, res, next) => {
   try {
     await repository.update(req.body.providerId, {
-      styles: res.serviceOfferingStyles
+      styles: res.serviceOfferingStyles,
+      priceRanges: res.serviceOfferingPriceRanges
     });
 
     next();

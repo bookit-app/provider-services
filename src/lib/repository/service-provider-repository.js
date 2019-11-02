@@ -114,7 +114,12 @@ class ServiceProviderRepository {
       return {};
     }
 
-    return omit(documentReference.data(), 'styles');
+    return omit(
+      documentReference.data(),
+      'styles',
+      'priceRanges',
+      'serviceSpecificPriceRanges'
+    );
   }
 
   /**

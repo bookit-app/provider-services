@@ -1,13 +1,20 @@
 'use strict';
 
 const PROVIDER_COLLECTION = 'ServiceProvider';
+const {
+  defaultSearchExpansionFunction,
+  priceRangeSearchExpansionFunction
+} = require('../util/provider-search-util');
+
 const supportedSearchParams = [
-  'city',
-  'state',
-  'zip',
-  'businessName',
-  'styles'
+  { name: 'city', expansionFunction: defaultSearchExpansionFunction },
+  { name: 'state', expansionFunction: defaultSearchExpansionFunction },
+  { name: 'zip', expansionFunction: defaultSearchExpansionFunction },
+  { name: 'businessName', expansionFunction: defaultSearchExpansionFunction },
+  { name: 'styles', expansionFunction: defaultSearchExpansionFunction },
+  { name: 'priceRange', expansionFunction: priceRangeSearchExpansionFunction }
 ];
+
 const { omit, isEmpty } = require('lodash');
 
 class ServiceProviderRepository {
@@ -121,19 +128,61 @@ class ServiceProviderRepository {
   async search(options) {
     const collection = this.firestore.collection(PROVIDER_COLLECTION);
     const query = buildSearchRequest(collection, options);
-    const results = [];
-    const querySnapshot = await query.select('businessName', 'address').get();
+
+    const querySnapshot = await query
+      .select(
+        'businessName',
+        'address',
+        'priceRanges',
+        'serviceSpecificPriceRanges'
+      )
+      .get();
 
     if (querySnapshot && !querySnapshot.empty) {
-      querySnapshot.forEach(docSnapshot => {
-        const data = docSnapshot.data();
-        data.providerId = docSnapshot.id;
-        results.push(data);
-      });
+      return querySnapshot.docs.reduce((results, docSnapshot) => {
+        const item = processSearchResultItem(docSnapshot, options || {});
+        if (!isEmpty(item)) {
+          results.push(item);
+        }
+        return results;
+      }, []);
     }
 
-    return results;
+    return [];
   }
+}
+
+function processSearchResultItem(documentSnapshot, filterOptions) {
+  const data = documentSnapshot.data();
+
+  const rangesToUse =
+    (filterOptions.styles && !isEmpty(data.serviceSpecificPriceRanges)
+      ? data.serviceSpecificPriceRanges[filterOptions.styles]
+      : data.priceRanges) || [];
+
+  if (isWithinPriceRange(rangesToUse, filterOptions.priceRange)) {
+    data.providerId = documentSnapshot.id;
+    return {
+      businessName: data.businessName,
+      address: data.address,
+      priceRanges: rangesToUse
+    };
+  }
+}
+
+function isWithinPriceRange(providerPriceRanges, requestedPriceRanges) {
+  if (isEmpty(requestedPriceRanges)) return true;
+
+  let withinRange = false;
+
+  for (const priceRange of providerPriceRanges) {
+    if (requestedPriceRanges.includes(priceRange)) {
+      withinRange = true;
+      break;
+    }
+  }
+
+  return withinRange;
 }
 
 /**

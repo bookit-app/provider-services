@@ -17,7 +17,8 @@ module.exports = repository => async (req, res, next) => {
   try {
     await repository.update(req.body.providerId, {
       styles: res.serviceOfferingStyles,
-      priceRanges: res.serviceOfferingPriceRanges
+      priceRanges: res.serviceOfferingPriceRanges,
+      serviceSpecificPriceRanges: res.serviceOfferingSpecificPriceRanges
     });
 
     next();

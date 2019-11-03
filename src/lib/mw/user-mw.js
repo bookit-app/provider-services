@@ -7,7 +7,7 @@ const { errors } = require('../constants');
 /**
  * Extracts the user information which was populated
  * by the ESP for Cloud Endpoints
- *
+ * https://cloud.google.com/endpoints/docs/openapi/authenticating-users-firebase
  * @param {Express.Request} req
  * @returns
  */

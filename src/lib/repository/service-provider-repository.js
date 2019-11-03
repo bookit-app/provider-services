@@ -88,7 +88,14 @@ class ServiceProviderRepository {
 
     if (snapshot && !snapshot.empty) {
       // As we enforce a single EIN return the first
-      return snapshot.docs[0].data();
+      const document = snapshot.docs[0].data();
+      document.providerId = snapshot.docs[0].id;
+      return omit(
+        document,
+        'styles',
+        'priceRanges',
+        'serviceSpecificPriceRanges'
+      );
     }
 
     return {};
@@ -99,9 +106,8 @@ class ServiceProviderRepository {
    * additionally options can be used to request
    * a specific sub map of the provider
    *
-   * @param { select: string } providerId
-   * @param {*} options
-   * @returns
+   * @param { String } providerId
+   * @returns {*}
    * @memberof ServiceProviderRepository
    */
   async findByProviderId(providerId) {
@@ -114,12 +120,43 @@ class ServiceProviderRepository {
       return {};
     }
 
+    const document = documentReference.data();
+    document.providerId = documentReference.id;
     return omit(
-      documentReference.data(),
+      document,
       'styles',
       'priceRanges',
       'serviceSpecificPriceRanges'
     );
+  }
+
+  /**
+   * Query for a provider by the ownerUid
+   *
+   * @param {String} ownerUid
+   * @returns {*}
+   * @memberof ServiceProviderRepository
+   */
+  async findByOwnerUid(ownerUid) {
+    const querySnapshot = await this.firestore
+      .collection(PROVIDER_COLLECTION)
+      .where('ownerUid', '==', ownerUid)
+      .get();
+
+    if (querySnapshot && !querySnapshot.empty) {
+      // Owner can only have 1 business so return the first entry
+      const document = querySnapshot.docs[0].data();
+      document.providerId = querySnapshot.docs[0].id;
+      return omit(
+        document,
+        querySnapshot.docs[0].data(),
+        'styles',
+        'priceRanges',
+        'serviceSpecificPriceRanges'
+      );
+    }
+
+    return {};
   }
 
   /**

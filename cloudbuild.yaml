@@ -85,6 +85,13 @@ steps:
     args: ["install"]
     dir: src/services/provider-delete-notification-processor
 
+  # staff-membership-request: dependency installation
+  - name: "node:10.16.3"
+    id: staff-membership-request-install
+    entrypoint: npm
+    args: ["install"]
+    dir: src/services/staff-membership-request
+
   # Run Lint
   - name: "node:10.16.3"
     id: lint
@@ -289,6 +296,26 @@ steps:
         "gcr.io/sweng-581-capstone/provider-delete-notification-processor:0.0.1",
       ]
 
+  # staff-membership-request: Build docker image
+  - name: "gcr.io/cloud-builders/docker"
+    id: build-staff-membership-request
+    waitFor:
+      - test-unit
+    args:
+      - build
+      - --build-arg
+      - service=staff-membership-request
+      - -t
+      - gcr.io/sweng-581-capstone/staff-membership-request:0.0.1
+      - .
+
+  # push-staff-membership-request: Push docker image
+  - name: "gcr.io/cloud-builders/docker"
+    id: push-staff-membership-request
+    waitFor:
+      - build-staff-membership-request
+    args: ["push", "gcr.io/sweng-581-capstone/staff-membership-request:0.0.1"]
+
   # create-service-provider: Deploy to cloud run
   - name: "gcr.io/cloud-builders/gcloud"
     waitFor:
@@ -406,6 +433,19 @@ steps:
       - --region=us-central1
       - --platform=managed
 
+  # staff-membership-request: Deploy to cloud run
+  - name: "gcr.io/cloud-builders/gcloud"
+    waitFor:
+      - push-staff-membership-request
+    args:
+      - beta
+      - run
+      - deploy
+      - staff-membership-request
+      - --image=gcr.io/sweng-581-capstone/staff-membership-request:0.0.1
+      - --region=us-central1
+      - --platform=managed
+
 images:
   - "gcr.io/sweng-581-capstone/create-service-provider"
   - "gcr.io/sweng-581-capstone/create-service-offering:0.0.1"
@@ -416,3 +456,4 @@ images:
   - "gcr.io/sweng-581-capstone/provider-search:0.0.1"
   - "gcr.io/sweng-581-capstone/delete-service-provider:0.0.1"
   - "gcr.io/sweng-581-capstone/provider-delete-notification-processor:0.0.1"
+  - "gcr.io/sweng-581-capstone/staff-membership-request:0.0.1"

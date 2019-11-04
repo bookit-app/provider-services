@@ -54,7 +54,6 @@ describe('staff-membership-request-repository unit tests', () => {
             providerId: 'TEST-PROVIDER',
             requestorUid: 'TEST-REQUESTOR',
             requestedStaffMemberEmail: 'test@test.com',
-            requestedStaffMemberUid: '',
             status: 'NEW'
           })
         ).to.be.true;

@@ -44,7 +44,6 @@ const next = stub();
 describe('offering-notification-processor query-offering-mw unit tests', () => {
   afterEach(() => {
     res.provider = {};
-    req.providerQueryOptions = {};
     next.resetHistory();
     repoStub.findAllServiceOfferings.resetHistory();
   });

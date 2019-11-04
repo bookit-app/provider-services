@@ -59,6 +59,12 @@ steps:
     dir: src/services/provider-delete-notification-processor
 
   - name: "node:10.16.3"
+    id: staff-membership-request-install
+    entrypoint: npm
+    args: ["install"]
+    dir: src/services/staff-membership-request
+
+  - name: "node:10.16.3"
     id: lint
     entrypoint: npm
     args: ["run", "lint"]

@@ -2,7 +2,7 @@
 
 const { errors } = require('../../../lib/constants');
 const ServiceError = require('../../../lib/util/service-error');
-const { clone } = require('lodash');
+const { clone, isEmpty } = require('lodash');
 
 /**
  * Express Middleware to trigger the provider query request
@@ -14,7 +14,14 @@ const { clone } = require('lodash');
  */
 module.exports = repository => async (req, res, next) => {
   try {
-    res.provider = await repository.findByProviderId(req.params.providerId);
+    res.provider = await repository.findByOwnerUid(req.apiUserInfo.id);
+
+    if (isEmpty(res.provider)) {
+      const error = clone(errors.malformedRequest);
+      error.message = 'Provider not found for user';
+      next(new ServiceError(error));
+      return;
+    }
 
     next();
   } catch (err) {

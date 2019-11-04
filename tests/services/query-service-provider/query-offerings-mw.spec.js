@@ -17,8 +17,7 @@ const req = {
   },
   params: {
     providerId: 'TEST-PROVIDER'
-  },
-  providerQueryOptions: {}
+  }
 };
 
 const res = {
@@ -57,7 +56,6 @@ describe('query-service-provider query-offering-mw unit tests', () => {
       phoneNumber: '123-123-1234',
       email: 'test@test.com'
     };
-    req.providerQueryOptions = {};
     next.resetHistory();
     repoStub.findAllServiceOfferings.resetHistory();
   });

@@ -70,6 +70,7 @@ describe('service-provider-repository unit tests', () => {
       documentReference.get.resolves({
         docs: [
           {
+            id: 'TEST-ID',
             data: () => provider
           }
         ],
@@ -78,7 +79,16 @@ describe('service-provider-repository unit tests', () => {
 
       expect(repo.findProviderByEin(provider.ein)).to.be.fulfilled.then(
         result => {
-          expect(result).to.deep.equal(provider);
+          expect(result).to.deep.equal({
+            providerId: 'TEST-ID',
+            businessName: 'Test Business',
+            address: {
+              streetAddress: '1234 Home Street',
+              zip: '98765',
+              city: 'Palo Alto',
+              state: 'CA'
+            }
+          });
         }
       );
     });
@@ -100,6 +110,7 @@ describe('service-provider-repository unit tests', () => {
   context('findByProviderId', () => {
     it('should return provider when found', () => {
       documentReference.get.resolves({
+        id: 'TEST-ID',
         data: () => provider,
         get: option => provider[option],
         exists: true
@@ -107,7 +118,16 @@ describe('service-provider-repository unit tests', () => {
 
       expect(repo.findByProviderId('PROVIDER-ID')).to.be.fulfilled.then(
         response => {
-          expect(response).to.deep.equal(provider);
+          expect(response).to.deep.equal({
+            providerId: 'TEST-ID',
+            businessName: 'Test Business',
+            address: {
+              streetAddress: '1234 Home Street',
+              zip: '98765',
+              city: 'Palo Alto',
+              state: 'CA'
+            }
+          });
         }
       );
     });
@@ -130,6 +150,49 @@ describe('service-provider-repository unit tests', () => {
       expect(repo.findByProviderId('PROVIDER-ID')).to.be.fulfilled.then(
         response => {
           expect(response).to.deep.equal({});
+        }
+      );
+    });
+  });
+
+  context('findByOwnerUid', () => {
+    it('should return a first found document', () => {
+      collectionReference.where.returns(documentReference);
+      documentReference.get.resolves({
+        docs: [
+          {
+            id: 'TEST-ID',
+            data: () => provider
+          }
+        ],
+        empty: false
+      });
+
+      expect(repo.findByOwnerUid('OWNER-ID')).to.be.fulfilled.then(
+        result => {
+          expect(result).to.deep.equal({
+            providerId: 'TEST-ID',
+            businessName: 'Test Business',
+            address: {
+              streetAddress: '1234 Home Street',
+              zip: '98765',
+              city: 'Palo Alto',
+              state: 'CA'
+            }
+          });
+        }
+      );
+    });
+
+    it('should return nothing if no documents are found', () => {
+      collectionReference.where.returns(documentReference);
+      documentReference.get.resolves({
+        empty: true
+      });
+
+      expect(repo.findByOwnerUid('OWNER-ID')).to.be.fulfilled.then(
+        result => {
+          expect(result).to.deep.equal({});
         }
       );
     });

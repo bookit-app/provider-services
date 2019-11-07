@@ -19,7 +19,7 @@ function updateRequestHandlerMW(req, res, next) {
       .staffMembershipRequestRepositoryInstance;
   updateRequestMW =
     updateRequestMW ||
-    require('./update-staff-membership-request')(staffMembershipRequestRepo);
+    require('./update-staff-membership-request-mw')(staffMembershipRequestRepo);
   return updateRequestMW(req, res, next);
 }
 

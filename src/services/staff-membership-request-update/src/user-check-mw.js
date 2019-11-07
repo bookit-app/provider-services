@@ -15,7 +15,8 @@ const { clone } = require('lodash');
 module.exports = (req, res, next) => {
   if (
     res.membershipRequest.requestedStaffMemberUid === req.apiUserInfo.id ||
-    res.membershipRequest.requestedStaffMemberEmail === req.apiUserInfo.email
+    res.membershipRequest.requestedStaffMemberEmail === req.apiUserInfo.email ||
+    res.membershipRequest.requestorUid === req.apiUserInfo.id
   ) {
     next();
   } else {

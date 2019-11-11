@@ -8,7 +8,7 @@ class ProfileClient {
   }
 
   async queryProfile(profileId) {
-    const token = await this.tokenClient.getToken();
+    const token = await this.tokenClient.getToken(this.host);
 
     return this.client.get({
       url: `${this.host}/admin/profile/${profileId}`,

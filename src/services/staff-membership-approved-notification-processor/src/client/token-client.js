@@ -5,8 +5,8 @@ class TokenClient {
     this.client = client;
   }
 
-  async getToken() {
-    if (process.env.NODE_ENV === 'development' && process.env.ACCESS_TOKEN) {
+  async getToken(host) {
+    if (process.env.NODE_ENV === 'development') {
       return process.env.ACCESS_TOKEN;
     }
 
@@ -16,7 +16,7 @@ class TokenClient {
       'http://metadata/computeMetadata/v1/instance/service-accounts/default/identity?audience=';
 
     const tokenRequestOptions = {
-      uri: metadataServerTokenURL + this.host,
+      uri: metadataServerTokenURL + host,
       headers: {
         'Metadata-Flavor': 'Google'
       }

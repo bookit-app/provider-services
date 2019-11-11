@@ -1,7 +1,7 @@
 'use strict';
 
-const { OK } = require('../../../lib/constants').statusCodes;
+const { CREATED } = require('../../../lib/constants').statusCodes;
 
 module.exports = (req, res) => {
-  res.sendStatus(OK);
+  res.sendStatus(CREATED);
 };

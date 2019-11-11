@@ -153,7 +153,12 @@ describe('staff-membership-request-repository unit tests', () => {
       });
 
       documentReference.set.resolves();
-      expect(repo.update('TEST-ID', 'ACCEPTED')).to.be.fulfilled.then(() => {
+      expect(
+        repo.update('TEST-ID', {
+          status: 'ACCEPTED',
+          staffMemberUid: 'TEST'
+        })
+      ).to.be.fulfilled.then(() => {
         expect(collectionReference.doc.calledWith('TEST-ID')).to.be.true;
         expect(documentReference.set.called).to.be.true;
       });
@@ -168,8 +173,13 @@ describe('staff-membership-request-repository unit tests', () => {
       });
 
       documentReference.set.resolves();
-      expect(repo.update('TEST', 'ACCEPTED')).to.be.rejected.then(err => {
-        expect(collectionReference.doc.calledWith('TEST')).to.be.true;
+      expect(
+        repo.update('TEST-ID', {
+          status: 'ACCEPTED',
+          staffMemberUid: 'TEST'
+        })
+      ).to.be.rejected.then(err => {
+        expect(collectionReference.doc.calledWith('TEST-ID')).to.be.true;
         expect(documentReference.set.called).to.be.false;
         expect(err.code).to.equal('REQUEST_NOT_EXISTING');
       });

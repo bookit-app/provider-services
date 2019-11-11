@@ -46,14 +46,23 @@ describe('staff-member-repository unit tests', () => {
 
   context('create', () => {
     it('should save the document', () => {
-      collectionReference.add.resolves({ id: 'TEST' });
+      documentReference.set.resolves();
 
       expect(repo.create('TEST-PROVIDER', staffMember)).to.be.fulfilled.then(
         documentId => {
           expect(collectionReference.doc.calledWith('TEST-PROVIDER')).to.be
             .true;
-          expect(collectionReference.add.calledWith(staffMember)).to.be.true;
-          expect(documentId).to.equal('TEST');
+          expect(collectionReference.doc.calledWith('TEST-UID')).to.be.true;
+          expect(
+            documentReference.set.calledWith(
+              {
+                email: 'test@test.com',
+                name: 'TEST-NAME'
+              },
+              { merge: true }
+            )
+          ).to.be.true;
+          expect(documentId).to.equal('TEST-UID');
         }
       );
     });
@@ -90,11 +99,11 @@ describe('staff-member-repository unit tests', () => {
         empty: true
       });
 
-      expect(repo.findByProviderIdAndEmail('TEST-PROVIDER', 'test@test.com')).to.be.fulfilled.then(
-        result => {
-          expect(result).to.deep.equal({});
-        }
-      );
+      expect(
+        repo.findByProviderIdAndEmail('TEST-PROVIDER', 'test@test.com')
+      ).to.be.fulfilled.then(result => {
+        expect(result).to.deep.equal({});
+      });
     });
   });
 });

@@ -36,11 +36,11 @@ class StaffMembershipRequestRepository {
    * Update the membership request
    *
    * @param {String} requestId
-   * @param {String} status
+   * @param {status: String, staffMemberUid: String} data
    * @returns {Promise<void>}
    * @memberof StaffMembershipRequestRepository
    */
-  async update(requestId, status) {
+  async update(requestId, data) {
     const documentReference = this.firestore
       .collection(COLLECTION_NAME)
       .doc(requestId);
@@ -55,7 +55,7 @@ class StaffMembershipRequestRepository {
         return Promise.reject(err);
       }
 
-      await t.set(documentReference, { status: status }, { merge: true });
+      await t.set(documentReference, data, { merge: true });
     });
   }
 

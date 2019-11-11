@@ -5,9 +5,8 @@ const ServiceError = require('../../../lib/util/service-error');
 const { clone } = require('lodash');
 
 /**
- * Express Middleware to trigger the update of the
- * staff membership request. It assumes the data is pre-validated
- * and the request object is containing the necessary user details
+ * Express Middleware to trigger the creation of the
+ * service in association the the provider. It assumes the data is pre-validated
  *
  * @param {Express.Request} req
  * @param {Express.Response} res
@@ -16,12 +15,20 @@ const { clone } = require('lodash');
  */
 module.exports = repository => async (req, res, next) => {
   try {
-    await repository.update(req.params.id, {
-      status: req.body.status,
-      staffMemberUid: req.apiUserInfo.id
+    await repository.create(req.body.providerId, {
+      staffMemberUid: req.body.staffMemberUid,
+      email: res.staffMemberProfile.email,
+      name: `${res.staffMemberProfile.firstName} ${res.staffMemberProfile.lastName}`
     });
+
     next();
   } catch (err) {
+    if (err.code === 'PROVIDER_NOT_EXISTING') {
+      // Nothing to process so just allow the chain to complete
+      next();
+      return;
+    }
+
     const error = clone(errors.updateFailed);
     error.message = err.message;
     next(new ServiceError(error));

@@ -19,21 +19,24 @@ class StaffMemberRepository {
    * @memberof ServiceProviderRepository
    */
   async create(providerId, staffMember) {
-    const document = await this.firestore
+    await this.firestore
       .collection(PROVIDER_COLLECTION)
       .doc(providerId)
       .collection(STAFF_SUBCOLLECTION)
-      .add({
-        staffMemberUid: staffMember.staffMemberUid,
-        email: staffMember.email,
-        name: staffMember.name
-      });
+      .doc(staffMember.staffMemberUid)
+      .set(
+        {
+          email: staffMember.email,
+          name: staffMember.name
+        },
+        { merge: true }
+      );
 
     logger.info(
-      `New staff member ${document.id} associated with provider ${providerId}`
+      `New staff member ${staffMember.staffMemberUid} associated with provider ${providerId}`
     );
 
-    return document.id;
+    return staffMember.staffMemberUid;
   }
 
   async findByProviderIdAndEmail(providerId, email) {

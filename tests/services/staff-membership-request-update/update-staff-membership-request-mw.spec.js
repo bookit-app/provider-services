@@ -33,14 +33,24 @@ describe('staff-membership-request-update update-staff-membership-request-mw uni
   it('should trigger the update', async () => {
     repoStub.update.resolves();
     await mw(req, {}, next);
-    expect(repoStub.update.calledWith('TEST-ID', 'ACCEPTED')).to.be.true;
+    expect(
+      repoStub.update.calledWith('TEST-ID', {
+        status: 'ACCEPTED',
+        staffMemberUid: 'TEST-OWNERID'
+      })
+    ).to.be.true;
     expect(next.called).to.be.true;
   });
 
   it('should raise UPDATE-FAILED if failure occurs from repo', async () => {
     repoStub.update.rejects(new Error('FORCED-ERROR'));
     await mw(req, {}, next);
-    expect(repoStub.update.calledWith('TEST-ID', 'ACCEPTED')).to.be.true;
+    expect(
+      repoStub.update.calledWith('TEST-ID', {
+        status: 'ACCEPTED',
+        staffMemberUid: 'TEST-OWNERID'
+      })
+    ).to.be.true;
     expect(next.called).to.be.true;
 
     const { errorCode, statusCode } = next.args[0][0];

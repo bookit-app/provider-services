@@ -3,457 +3,157 @@ steps:
     id: root-install
     entrypoint: npm
     args: ["install"]
-
-  # create-service-provider: dependency installation
-  - name: "node:10.16.3"
-    id: create-service-provider-install
+  
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: fork-build-configuration-service
+    entrypoint: 'bash'
     waitFor:
       - root-install
-    entrypoint: npm
-    args: ["install"]
-    dir: src/services/create-service-provider
+    args:
+    - '-c'
+    - |
+      gcloud builds submit $d --config=./src/services/configuration-service/cloudbuild.yaml
+      wait
 
-  # create-service-offering: dependency installation
-  - name: "node:10.16.3"
-    id: create-service-offering-install
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: fork-build-create-service-offering
+    entrypoint: 'bash'
     waitFor:
       - root-install
-    entrypoint: npm
-    args: ["install"]
-    dir: src/services/create-service-offering
+    args:
+    - '-c'
+    - |
+      gcloud builds submit $d --config=./src/services/create-service-offering/cloudbuild.yaml
+      wait
 
-  # update-service-offering: dependency installation
-  - name: "node:10.16.3"
-    id: update-service-offering-install
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: fork-build-create-service-provider
+    entrypoint: 'bash'
     waitFor:
       - root-install
-    entrypoint: npm
-    args: ["install"]
-    dir: src/services/update-service-offering
+    args:
+    - '-c'
+    - |
+      gcloud builds submit $d --config=./src/services/create-service-provider/cloudbuild.yaml
+      wait
 
-  # offering-notification-processor: dependency installation
-  - name: "node:10.16.3"
-    id: offering-notification-processor-install
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: fork-build-delete-service-provider
+    entrypoint: 'bash'
     waitFor:
       - root-install
-    entrypoint: npm
-    args: ["install"]
-    dir: src/services/offering-notification-processor
+    args:
+    - '-c'
+    - |
+      gcloud builds submit $d --config=./src/services/delete-service-provider/cloudbuild.yaml
+      wait
 
-  # query-service-provider: dependency installation
-  - name: "node:10.16.3"
-    id: query-service-provider-install
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: fork-build-offering-notification-processor
+    entrypoint: 'bash'
     waitFor:
       - root-install
-    entrypoint: npm
-    args: ["install"]
-    dir: src/services/query-service-provider
+    args:
+    - '-c'
+    - |
+      gcloud builds submit $d --config=./src/services/offering-notification-processor/cloudbuild.yaml
+      wait
 
-  # configuration-service: dependency installation
-  - name: "node:10.16.3"
-    id: configuration-service-install
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: fork-build-provider-delete-notification-processor
+    entrypoint: 'bash'
     waitFor:
       - root-install
-    entrypoint: npm
-    args: ["install"]
-    dir: src/services/configuration-service
+    args:
+    - '-c'
+    - |
+      gcloud builds submit $d --config=./src/services/provider-delete-notification-processor/cloudbuild.yaml
+      wait
 
-  # provider-search: dependency installation
-  - name: "node:10.16.3"
-    id: provider-search-install
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: fork-build-provider-search
+    entrypoint: 'bash'
     waitFor:
       - root-install
-    entrypoint: npm
-    args: ["install"]
-    dir: src/services/provider-search
+    args:
+    - '-c'
+    - |
+      gcloud builds submit $d --config=./src/services/provider-search/cloudbuild.yaml
+      wait
 
-  # delete-service-provider: dependency installation
-  - name: "node:10.16.3"
-    id: delete-service-provider-install
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: fork-build-query-service-provider
+    entrypoint: 'bash'
     waitFor:
       - root-install
-    entrypoint: npm
-    args: ["install"]
-    dir: src/services/delete-service-provider
+    args:
+    - '-c'
+    - |
+      gcloud builds submit $d --config=./src/services/query-service-provider/cloudbuild.yaml
+      wait
 
-  # provider-delete-notification-processor: dependency installation
-  - name: "node:10.16.3"
-    id: provider-delete-notification-processor-install
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: fork-build-staff-membership-accepted-notification-processor
+    entrypoint: 'bash'
     waitFor:
       - root-install
-    entrypoint: npm
-    args: ["install"]
-    dir: src/services/provider-delete-notification-processor
-
-  # staff-membership-request: dependency installation
-  - name: "node:10.16.3"
-    id: staff-membership-request-install
-    entrypoint: npm
-    args: ["install"]
-    dir: src/services/staff-membership-request
-
-  # Run Lint
-  - name: "node:10.16.3"
-    id: lint
-    entrypoint: npm
-    args: ["run", "lint"]
-
-  # Run Unit Tests
-  - name: "node:10.16.3"
-    id: test-unit
-    entrypoint: npm
-    args: ["run", "test"]
-
-  # create-service-provider: Build docker image
-  - name: "gcr.io/cloud-builders/docker"
-    id: build-create-service-provider
-    waitFor:
-      - test-unit
     args:
-      - build
-      - --build-arg
-      - service=create-service-provider
-      - -t
-      - gcr.io/sweng-581-capstone/create-service-provider:0.0.1
-      - .
+    - '-c'
+    - |
+      gcloud builds submit $d --config=./src/services/staff-membership-accepted-notification-processor/cloudbuild.yaml
+      wait
 
-  # create-service-provider: Push docker image
-  - name: "gcr.io/cloud-builders/docker"
-    id: push-create-service-provider
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: fork-build-staff-membership-request
+    entrypoint: 'bash'
     waitFor:
-      - build-create-service-provider
-    args: ["push", "gcr.io/sweng-581-capstone/create-service-provider:0.0.1"]
-
-  # create-service-offering: Build docker image
-  - name: "gcr.io/cloud-builders/docker"
-    id: build-create-service-offering
-    waitFor:
-      - test-unit
+      - root-install
     args:
-      - build
-      - --build-arg
-      - service=create-service-offering
-      - -t
-      - gcr.io/sweng-581-capstone/create-service-offering:0.0.1
-      - .
+    - '-c'
+    - |
+      gcloud builds submit $d --config=./src/services/staff-membership-request/cloudbuild.yaml
+      wait
 
-  # create-service-offering: Push docker image
-  - name: "gcr.io/cloud-builders/docker"
-    id: push-create-service-offering
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: fork-build-staff-membership-request-query
+    entrypoint: 'bash'
     waitFor:
-      - build-create-service-offering
-    args: ["push", "gcr.io/sweng-581-capstone/create-service-offering:0.0.1"]
-
-  # update-service-offering: Build docker image
-  - name: "gcr.io/cloud-builders/docker"
-    id: build-update-service-offering
-    waitFor:
-      - test-unit
+      - root-install
     args:
-      - build
-      - --build-arg
-      - service=update-service-offering
-      - -t
-      - gcr.io/sweng-581-capstone/update-service-offering:0.0.1
-      - .
+    - '-c'
+    - |
+      gcloud builds submit $d --config=./src/services/staff-membership-request-query/cloudbuild.yaml
+      wait
 
-  # update-service-offering: Push docker image
-  - name: "gcr.io/cloud-builders/docker"
-    id: push-update-service-offering
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: fork-build-staff-membership-request-update
+    entrypoint: 'bash'
     waitFor:
-      - build-update-service-offering
-    args: ["push", "gcr.io/sweng-581-capstone/update-service-offering:0.0.1"]
-
-  # offering-notification-processor: Build docker image
-  - name: "gcr.io/cloud-builders/docker"
-    id: build-offering-notification-processor
-    waitFor:
-      - test-unit
+      - root-install
     args:
-      - build
-      - --build-arg
-      - service=offering-notification-processor
-      - -t
-      - gcr.io/sweng-581-capstone/offering-notification-processor:0.0.1
-      - .
+    - '-c'
+    - |
+      gcloud builds submit $d --config=./src/services/staff-membership-request-update/cloudbuild.yaml
+      wait
 
-  # offering-notification-processor: Push docker image
-  - name: "gcr.io/cloud-builders/docker"
-    id: push-offering-notification-processor
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: fork-build-update-service-offering
+    entrypoint: 'bash'
     waitFor:
-      - build-offering-notification-processor
+      - root-install
     args:
-      [
-        "push",
-        "gcr.io/sweng-581-capstone/offering-notification-processor:0.0.1",
-      ]
+    - '-c'
+    - |
+      gcloud builds submit $d --config=./src/services/update-service-offering/cloudbuild.yaml
+      wait
 
-  # query-service-provider: Build docker image
-  - name: "gcr.io/cloud-builders/docker"
-    id: build-query-service-provider
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: fork-build-update-service-provider
+    entrypoint: 'bash'
     waitFor:
-      - test-unit
+      - root-install
     args:
-      - build
-      - --build-arg
-      - service=query-service-provider
-      - -t
-      - gcr.io/sweng-581-capstone/query-service-provider:0.0.1
-      - .
-
-  # query-service-provider: Push docker image
-  - name: "gcr.io/cloud-builders/docker"
-    id: push-query-service-provider
-    waitFor:
-      - build-query-service-provider
-    args: ["push", "gcr.io/sweng-581-capstone/query-service-provider:0.0.1"]
-
-  # configuration-service: Build docker image
-  - name: "gcr.io/cloud-builders/docker"
-    id: build-configuration-service
-    waitFor:
-      - test-unit
-    args:
-      - build
-      - --build-arg
-      - service=configuration-service
-      - -t
-      - gcr.io/sweng-581-capstone/service-provider-config-service:0.0.1
-      - .
-
-  # configuration-service: Push docker image
-  - name: "gcr.io/cloud-builders/docker"
-    id: push-configuration-service
-    waitFor:
-      - build-configuration-service
-    args:
-      [
-        "push",
-        "gcr.io/sweng-581-capstone/service-provider-config-service:0.0.1",
-      ]
-
-  # provider-search: Build docker image
-  - name: "gcr.io/cloud-builders/docker"
-    id: build-provider-search
-    waitFor:
-      - test-unit
-    args:
-      - build
-      - --build-arg
-      - service=provider-search
-      - -t
-      - gcr.io/sweng-581-capstone/provider-search:0.0.1
-      - .
-
-  # provider-search: Push docker image
-  - name: "gcr.io/cloud-builders/docker"
-    id: push-provider-search
-    waitFor:
-      - build-provider-search
-    args: ["push", "gcr.io/sweng-581-capstone/provider-search:0.0.1"]
-
-  # delete-service-provider: Build docker image
-  - name: "gcr.io/cloud-builders/docker"
-    id: build-delete-service-provider
-    waitFor:
-      - test-unit
-    args:
-      - build
-      - --build-arg
-      - service=delete-service-provider
-      - -t
-      - gcr.io/sweng-581-capstone/delete-service-provider:0.0.1
-      - .
-
-  # delete-service-provider: Push docker image
-  - name: "gcr.io/cloud-builders/docker"
-    id: push-delete-service-provider
-    waitFor:
-      - build-delete-service-provider
-    args: ["push", "gcr.io/sweng-581-capstone/delete-service-provider:0.0.1"]
-
-  # provider-delete-notification-processor: Build docker image
-  - name: "gcr.io/cloud-builders/docker"
-    id: build-provider-delete-notification-processor
-    waitFor:
-      - test-unit
-    args:
-      - build
-      - --build-arg
-      - service=provider-delete-notification-processor
-      - -t
-      - gcr.io/sweng-581-capstone/provider-delete-notification-processor:0.0.1
-      - .
-
-  # provider-delete-notification-processor: Push docker image
-  - name: "gcr.io/cloud-builders/docker"
-    id: push-provider-delete-notification-processor
-    waitFor:
-      - build-provider-delete-notification-processor
-    args:
-      [
-        "push",
-        "gcr.io/sweng-581-capstone/provider-delete-notification-processor:0.0.1",
-      ]
-
-  # staff-membership-request: Build docker image
-  - name: "gcr.io/cloud-builders/docker"
-    id: build-staff-membership-request
-    waitFor:
-      - test-unit
-    args:
-      - build
-      - --build-arg
-      - service=staff-membership-request
-      - -t
-      - gcr.io/sweng-581-capstone/staff-membership-request:0.0.1
-      - .
-
-  # push-staff-membership-request: Push docker image
-  - name: "gcr.io/cloud-builders/docker"
-    id: push-staff-membership-request
-    waitFor:
-      - build-staff-membership-request
-    args: ["push", "gcr.io/sweng-581-capstone/staff-membership-request:0.0.1"]
-
-  # create-service-provider: Deploy to cloud run
-  - name: "gcr.io/cloud-builders/gcloud"
-    waitFor:
-      - push-create-service-provider
-    args:
-      - beta
-      - run
-      - deploy
-      - create-service-provider
-      - --image=gcr.io/sweng-581-capstone/create-service-provider:0.0.1
-      - --region=us-central1
-      - --platform=managed
-
-  # create-service-offering: Deploy to cloud run
-  - name: "gcr.io/cloud-builders/gcloud"
-    waitFor:
-      - push-create-service-offering
-    args:
-      - beta
-      - run
-      - deploy
-      - create-service-offering
-      - --image=gcr.io/sweng-581-capstone/create-service-offering:0.0.1
-      - --region=us-central1
-      - --platform=managed
-
-  # update-service-offering: Deploy to cloud run
-  - name: "gcr.io/cloud-builders/gcloud"
-    waitFor:
-      - push-update-service-offering
-    args:
-      - beta
-      - run
-      - deploy
-      - update-service-offering
-      - --image=gcr.io/sweng-581-capstone/update-service-offering:0.0.1
-      - --region=us-central1
-      - --platform=managed
-
-  # offering-notification-processor: Deploy to cloud run
-  - name: "gcr.io/cloud-builders/gcloud"
-    waitFor:
-      - push-offering-notification-processor
-    args:
-      - beta
-      - run
-      - deploy
-      - offering-notification-processor
-      - --image=gcr.io/sweng-581-capstone/offering-notification-processor:0.0.1
-      - --region=us-central1
-      - --platform=managed
-
-  # query-service-provider: Deploy to cloud run
-  - name: "gcr.io/cloud-builders/gcloud"
-    waitFor:
-      - push-query-service-provider
-    args:
-      - beta
-      - run
-      - deploy
-      - query-service-provider
-      - --image=gcr.io/sweng-581-capstone/query-service-provider:0.0.1
-      - --region=us-central1
-      - --platform=managed
-
-  # configuration-service: Deploy to cloud run
-  - name: "gcr.io/cloud-builders/gcloud"
-    waitFor:
-      - push-configuration-service
-    args:
-      - beta
-      - run
-      - deploy
-      - service-provider-config-service
-      - --image=gcr.io/sweng-581-capstone/service-provider-config-service:0.0.1
-      - --region=us-central1
-      - --platform=managed
-
-  # provider-search: Deploy to cloud run
-  - name: "gcr.io/cloud-builders/gcloud"
-    waitFor:
-      - push-provider-search
-    args:
-      - beta
-      - run
-      - deploy
-      - provider-search
-      - --image=gcr.io/sweng-581-capstone/provider-search:0.0.1
-      - --region=us-central1
-      - --platform=managed
-
-  # delete-service-provider: Deploy to cloud run
-  - name: "gcr.io/cloud-builders/gcloud"
-    waitFor:
-      - push-delete-service-provider
-    args:
-      - beta
-      - run
-      - deploy
-      - delete-service-provider
-      - --image=gcr.io/sweng-581-capstone/delete-service-provider:0.0.1
-      - --region=us-central1
-      - --platform=managed
-
-  # provider-delete-notification-processor: Deploy to cloud run
-  - name: "gcr.io/cloud-builders/gcloud"
-    waitFor:
-      - push-provider-delete-notification-processor
-    args:
-      - beta
-      - run
-      - deploy
-      - provider-delete-notification-processor
-      - --image=gcr.io/sweng-581-capstone/provider-delete-notification-processor:0.0.1
-      - --region=us-central1
-      - --platform=managed
-
-  # staff-membership-request: Deploy to cloud run
-  - name: "gcr.io/cloud-builders/gcloud"
-    waitFor:
-      - push-staff-membership-request
-    args:
-      - beta
-      - run
-      - deploy
-      - staff-membership-request
-      - --image=gcr.io/sweng-581-capstone/staff-membership-request:0.0.1
-      - --region=us-central1
-      - --platform=managed
-
-images:
-  - "gcr.io/sweng-581-capstone/create-service-provider"
-  - "gcr.io/sweng-581-capstone/create-service-offering:0.0.1"
-  - "gcr.io/sweng-581-capstone/update-service-offering:0.0.1"
-  - "gcr.io/sweng-581-capstone/offering-notification-processor:0.0.1"
-  - "gcr.io/sweng-581-capstone/query-service-provider:0.0.1"
-  - "gcr.io/sweng-581-capstone/service-provider-config-service:0.0.1"
-  - "gcr.io/sweng-581-capstone/provider-search:0.0.1"
-  - "gcr.io/sweng-581-capstone/delete-service-provider:0.0.1"
-  - "gcr.io/sweng-581-capstone/provider-delete-notification-processor:0.0.1"
-  - "gcr.io/sweng-581-capstone/staff-membership-request:0.0.1"
+    - '-c'
+    - |
+      gcloud builds submit $d --config=./src/services/update-service-provider/cloudbuild.yaml
+      wait

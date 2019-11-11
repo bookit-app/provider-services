@@ -34,7 +34,7 @@ app.use(bodyParser.json());
 app.post(
   '/',
   require('../../../lib/mw/trace-id-mw'),
-  //require('../../../lib/mw/convert-pubsub-message-mw'),
+  require('../../../lib/mw/convert-pubsub-message-mw'),
   queryProfileHandlerMW,
   createStaffMemberHandlerMW,
   require('./success-mw')

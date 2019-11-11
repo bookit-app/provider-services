@@ -24,5 +24,5 @@ module.exports = ProfileClient;
 module.exports.profileClientInstance = new ProfileClient(
   require('./http-client'),
   require('./token-client').tokenClientInstance,
-  process.env['PROFILE_SERVICE_HOST']
+  process.env.PROFILE_SERVICE_HOST
 );

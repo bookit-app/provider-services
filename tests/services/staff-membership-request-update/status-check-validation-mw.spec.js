@@ -37,7 +37,7 @@ describe('staff-membership-request-update user-check-mw unit tests', () => {
   it('should call next with error is any status other than NEW', () => {
     const res = {
       membershipRequest: {
-        status: 'ACCEPTED'
+        status: 'APPROVED'
       }
     };
 

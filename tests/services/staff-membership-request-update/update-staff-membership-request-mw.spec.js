@@ -18,7 +18,7 @@ const req = {
     id: 'TEST-ID'
   },
   body: {
-    status: 'ACCEPTED'
+    status: 'APPROVED'
   }
 };
 
@@ -35,7 +35,7 @@ describe('staff-membership-request-update update-staff-membership-request-mw uni
     await mw(req, {}, next);
     expect(
       repoStub.update.calledWith('TEST-ID', {
-        status: 'ACCEPTED',
+        status: 'APPROVED',
         staffMemberUid: 'TEST-OWNERID'
       })
     ).to.be.true;
@@ -47,7 +47,7 @@ describe('staff-membership-request-update update-staff-membership-request-mw uni
     await mw(req, {}, next);
     expect(
       repoStub.update.calledWith('TEST-ID', {
-        status: 'ACCEPTED',
+        status: 'APPROVED',
         staffMemberUid: 'TEST-OWNERID'
       })
     ).to.be.true;

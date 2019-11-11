@@ -54,7 +54,7 @@ app.patch(
   validateMW,
   loadRequestHandlerMW,
   require('./user-check-mw'),
-  require('./status-check-validation'),
+  require('./status-check-validation-mw'),
   updateRequestHandlerMW,
   require('./success-mw')
 );

@@ -155,7 +155,7 @@ describe('staff-membership-request-repository unit tests', () => {
       documentReference.set.resolves();
       expect(
         repo.update('TEST-ID', {
-          status: 'ACCEPTED',
+          status: 'APPROVED',
           staffMemberUid: 'TEST'
         })
       ).to.be.fulfilled.then(() => {
@@ -175,7 +175,7 @@ describe('staff-membership-request-repository unit tests', () => {
       documentReference.set.resolves();
       expect(
         repo.update('TEST-ID', {
-          status: 'ACCEPTED',
+          status: 'APPROVED',
           staffMemberUid: 'TEST'
         })
       ).to.be.rejected.then(err => {

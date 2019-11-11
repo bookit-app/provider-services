@@ -9,7 +9,7 @@ module.exports.schema = {
   properties: {
     status: {
       type: 'string',
-      enum: ['ACCEPTED', 'DECLINED']
+      enum: ['APPROVED', 'DECLINED']
     }
   }
 };

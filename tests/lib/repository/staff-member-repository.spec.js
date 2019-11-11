@@ -44,6 +44,10 @@ describe('staff-member-repository unit tests', () => {
     documentReference.delete.resetHistory();
   });
 
+  it('should return the collection name', () => {
+    expect(repo.collection).to.equal('staff');
+  });
+
   context('create', () => {
     it('should save the document', () => {
       documentReference.set.resolves();
@@ -104,6 +108,41 @@ describe('staff-member-repository unit tests', () => {
       ).to.be.fulfilled.then(result => {
         expect(result).to.deep.equal({});
       });
+    });
+  });
+
+  context('findAllStaffMembers', () => {
+    const staff = [
+      {
+        staffMemberUid: 'TEST-UID',
+        email: 'test@test.com',
+        name: 'TEST-NAME'
+      },
+      {
+        staffMemberUid: 'TEST-UID-1',
+        email: 'test1@test.com',
+        name: 'TEST1-NAME'
+      }
+    ];
+
+    it('should return an array of staff members', () => {
+      const querySnapshotSub = {
+        docs: [
+          {
+            data: () => staff[0]
+          },
+          {
+            data: () => staff[1]
+          }
+        ]
+      };
+      collectionReference.get.resolves(querySnapshotSub);
+
+      expect(repo.findAllStaffMembers('TEST-PROVIDER')).to.be.fulfilled.then(
+        results => {
+          expect(results).to.deep.equal(staff);
+        }
+      );
     });
   });
 });

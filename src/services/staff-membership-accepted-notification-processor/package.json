@@ -1,5 +1,5 @@
 {
-  "name": "staff-membership-approved-notification-processor",
+  "name": "staff-membership-accepted-notification-processor",
   "description": "Handler for Approved Staff membership notifications",
   "main": "src/index.js",
   "scripts": {

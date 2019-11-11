@@ -6,7 +6,7 @@ const { errors } = require('../../../src/lib/constants');
 const repoStub = {
   create: stub()
 };
-const mw = require('../../../src/services/staff-membership-approved-notification-processor/src/create-staff-member-mw')(
+const mw = require('../../../src/services/staff-membership-accepted-notification-processor/src/create-staff-member-mw')(
   repoStub
 );
 
@@ -40,7 +40,7 @@ const res = {
 
 const next = stub();
 
-describe('staff-membership-approved-notification-processor create-staff-member-mw unit-tests', () => {
+describe('staff-membership-accepted-notification-processor create-staff-member-mw unit-tests', () => {
   afterEach(() => {
     next.resetHistory();
     repoStub.create.resetHistory();

@@ -2,7 +2,7 @@
 
 const { expect } = require('chai');
 const { stub } = require('sinon');
-const TokenClient = require('../../../../src/services/staff-membership-approved-notification-processor/src/client/token-client');
+const TokenClient = require('../../../../src/services/staff-membership-accepted-notification-processor/src/client/token-client');
 
 describe('provider-client unit tests', () => {
   let client, httpStub;

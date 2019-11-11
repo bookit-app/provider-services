@@ -6,7 +6,7 @@ const { errors } = require('../../../src/lib/constants');
 const clientStub = {
   queryProfile: stub()
 };
-const mw = require('../../../src/services/staff-membership-approved-notification-processor/src/query-profile-mw')(
+const mw = require('../../../src/services/staff-membership-accepted-notification-processor/src/query-profile-mw')(
   clientStub
 );
 
@@ -38,7 +38,7 @@ const profile = {
 
 const next = stub();
 
-describe('staff-membership-approved-notification-processor query-profile-mw unit tests', () => {
+describe('staff-membership-accepted-notification-processor query-profile-mw unit tests', () => {
   afterEach(() => {
     next.resetHistory();
     clientStub.queryProfile.resetHistory();

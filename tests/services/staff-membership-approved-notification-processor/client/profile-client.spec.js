@@ -2,7 +2,7 @@
 
 const { expect } = require('chai');
 const { stub } = require('sinon');
-const ProfileClient = require('../../../../src/services/staff-membership-approved-notification-processor/src/client/profile-client');
+const ProfileClient = require('../../../../src/services/staff-membership-accepted-notification-processor/src/client/profile-client');
 
 const profile = {
   address: {

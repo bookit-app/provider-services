@@ -15,7 +15,7 @@ cd ../provider-search
 npm install
 cd ../query-service-provider
 npm install
-cd ../staff-membership-approved-notification-processor
+cd ../staff-membership-accepted-notification-processor
 npm install
 cd ../staff-membership-request
 npm install

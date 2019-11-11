@@ -487,7 +487,6 @@ describe('service-provider-repository unit tests', () => {
       );
       documentReference.get.resolves({
         data: () => provider,
-        get: option => provider[option],
         exists: true
       });
 

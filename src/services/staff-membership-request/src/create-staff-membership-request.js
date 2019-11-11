@@ -18,10 +18,11 @@ module.exports = repository => async (req, res, next) => {
   try {
     const request = {
       providerId: res.provider.providerId,
+      businessName: res.provider.businessName,
       requestorUid: req.apiUserInfo.id,
       requestedStaffMemberEmail: req.body.requestedStaffMemberEmail
     };
-    
+
     const docId = await repository.create(request);
     res.location(`/staffMemberRequest/${docId}`);
     next();

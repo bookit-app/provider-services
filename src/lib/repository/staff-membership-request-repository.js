@@ -19,6 +19,7 @@ class StaffMembershipRequestRepository {
   async create(request) {
     const document = await this.firestore.collection(COLLECTION_NAME).add({
       providerId: request.providerId,
+      businessName: request.businessName,
       requestorUid: request.requestorUid,
       requestedStaffMemberEmail: request.requestedStaffMemberEmail,
       status: 'NEW'
@@ -40,18 +41,28 @@ class StaffMembershipRequestRepository {
    * @memberof StaffMembershipRequestRepository
    */
   async update(requestId, status) {
-    await this.firestore
+    const documentReference = this.firestore
       .collection(COLLECTION_NAME)
-      .doc(requestId)
-      .set({ status: status }, { merge: true });
+      .doc(requestId);
 
-    return;
+    return this.firestore.runTransaction(async t => {
+      const document = await t.get(documentReference);
+
+      // The provider has been deleted so nothing to update at this point
+      if (isEmpty(document) || !document.exists) {
+        const err = new Error();
+        err.code = 'REQUEST_NOT_EXISTING';
+        return Promise.reject(err);
+      }
+
+      await t.set(documentReference, { status: status }, { merge: true });
+    });
   }
 
   /**
    * Query for a request by the id
    *
-   * @param { String } providerId
+   * @param { String } requestId
    * @returns {*}
    * @memberof StaffMembershipRequestRepository
    */
@@ -66,8 +77,33 @@ class StaffMembershipRequestRepository {
     }
 
     const document = documentReference.data();
-    document.requestId = documentReference.id;
+    document.id = documentReference.id;
     return document;
+  }
+
+  /**
+   * Query for a request by the staff member email
+   *
+   * @param { String } email
+   * @returns {*}
+   * @memberof StaffMembershipRequestRepository
+   */
+  async findByRequestedEmail(email) {
+    const querySnapshot = await this.firestore
+      .collection(COLLECTION_NAME)
+      .where('requestedStaffMemberEmail', '==', email)
+      .get();
+
+    let requests = [];
+    if (isEmpty(querySnapshot) || !querySnapshot.empty) {
+      querySnapshot.forEach(documentSnapshot => {
+        const document = documentSnapshot.data();
+        document.id = documentSnapshot.id;
+        requests.push(document);
+      });
+    }
+
+    return requests;
   }
 }
 

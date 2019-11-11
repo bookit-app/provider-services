@@ -21,7 +21,8 @@ const req = {
 
 const res = {
   provider: {
-    providerId: 'TEST-PROVIDER'
+    providerId: 'TEST-PROVIDER',
+    businessName: 'TEST-BUSINESS-NAME'
   },
   location: stub()
 };
@@ -42,6 +43,7 @@ describe('staff-membership-request create-staff-membership-request unit tests', 
       expect(
         repoStub.create.calledWith({
           providerId: 'TEST-PROVIDER',
+          businessName: 'TEST-BUSINESS-NAME',
           requestorUid: 'TEST-OWNERID',
           requestedStaffMemberEmail: 'test@test.com'
         })
@@ -58,6 +60,7 @@ describe('staff-membership-request create-staff-membership-request unit tests', 
       expect(
         repoStub.create.calledWith({
           providerId: 'TEST-PROVIDER',
+          businessName: 'TEST-BUSINESS-NAME',
           requestorUid: 'TEST-OWNERID',
           requestedStaffMemberEmail: 'test@test.com'
         })

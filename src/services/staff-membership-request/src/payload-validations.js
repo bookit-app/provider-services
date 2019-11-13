@@ -5,6 +5,7 @@ module.exports.schema = {
   $id: 'http://bookit.com/schemas/staff-membership-request-schema.json',
   type: 'object',
   required: ['requestedStaffMemberEmail'],
+  additionalProperties: false,
   properties: {
     requestedStaffMemberEmail: {
       type: 'string',

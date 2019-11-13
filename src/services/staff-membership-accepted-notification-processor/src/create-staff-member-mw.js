@@ -6,8 +6,7 @@ const { clone } = require('lodash');
 
 /**
  * Express Middleware to trigger the creation of the
- * staff membership request. It assumes the data is pre-validated
- * and the request object is containing the necessary user details
+ * service in association the the provider. It assumes the data is pre-validated
  *
  * @param {Express.Request} req
  * @param {Express.Response} res
@@ -16,15 +15,12 @@ const { clone } = require('lodash');
  */
 module.exports = repository => async (req, res, next) => {
   try {
-    const request = {
-      providerId: res.provider.providerId,
-      businessName: res.provider.businessName,
-      requestorUid: req.apiUserInfo.id,
-      requestedStaffMemberEmail: req.body.requestedStaffMemberEmail
-    };
+    await repository.create(req.body.providerId, {
+      staffMemberUid: req.body.staffMemberUid,
+      email: res.staffMemberProfile.email,
+      name: `${res.staffMemberProfile.firstName} ${res.staffMemberProfile.lastName}`
+    });
 
-    const docId = await repository.create(request);
-    res.location(`/staffMemberRequest/${docId}`);
     next();
   } catch (err) {
     const error = clone(errors.updateFailed);

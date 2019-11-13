@@ -5,6 +5,16 @@ const statusCode = require('http-status-codes');
 module.exports = Object.freeze({
   statusCodes: statusCode,
   errors: {
+    notFound: {
+      errorCode: 'NOT_FOUND',
+      statusCode: statusCode.NOT_FOUND,
+      message: 'Object not found'
+    },
+    forbidden: {
+      errorCode: 'FORBIDDEN',
+      statusCode: statusCode.FORBIDDEN,
+      message: 'You are not allowed to perform this action'
+    },
     unauthorized: {
       errorCode: 'UNAUTHORIZED',
       statusCode: statusCode.UNAUTHORIZED,

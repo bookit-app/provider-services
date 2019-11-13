@@ -44,16 +44,29 @@ describe('staff-member-repository unit tests', () => {
     documentReference.delete.resetHistory();
   });
 
+  it('should return the collection name', () => {
+    expect(repo.collection).to.equal('staff');
+  });
+
   context('create', () => {
     it('should save the document', () => {
-      collectionReference.add.resolves({ id: 'TEST' });
+      documentReference.set.resolves();
 
       expect(repo.create('TEST-PROVIDER', staffMember)).to.be.fulfilled.then(
         documentId => {
           expect(collectionReference.doc.calledWith('TEST-PROVIDER')).to.be
             .true;
-          expect(collectionReference.add.calledWith(staffMember)).to.be.true;
-          expect(documentId).to.equal('TEST');
+          expect(collectionReference.doc.calledWith('TEST-UID')).to.be.true;
+          expect(
+            documentReference.set.calledWith(
+              {
+                email: 'test@test.com',
+                name: 'TEST-NAME'
+              },
+              { merge: true }
+            )
+          ).to.be.true;
+          expect(documentId).to.equal('TEST-UID');
         }
       );
     });
@@ -90,9 +103,44 @@ describe('staff-member-repository unit tests', () => {
         empty: true
       });
 
-      expect(repo.findByProviderIdAndEmail('TEST-PROVIDER', 'test@test.com')).to.be.fulfilled.then(
-        result => {
-          expect(result).to.deep.equal({});
+      expect(
+        repo.findByProviderIdAndEmail('TEST-PROVIDER', 'test@test.com')
+      ).to.be.fulfilled.then(result => {
+        expect(result).to.deep.equal({});
+      });
+    });
+  });
+
+  context('findAllStaffMembers', () => {
+    const staff = [
+      {
+        staffMemberUid: 'TEST-UID',
+        email: 'test@test.com',
+        name: 'TEST-NAME'
+      },
+      {
+        staffMemberUid: 'TEST-UID-1',
+        email: 'test1@test.com',
+        name: 'TEST1-NAME'
+      }
+    ];
+
+    it('should return an array of staff members', () => {
+      const querySnapshotSub = {
+        docs: [
+          {
+            data: () => staff[0]
+          },
+          {
+            data: () => staff[1]
+          }
+        ]
+      };
+      collectionReference.get.resolves(querySnapshotSub);
+
+      expect(repo.findAllStaffMembers('TEST-PROVIDER')).to.be.fulfilled.then(
+        results => {
+          expect(results).to.deep.equal(staff);
         }
       );
     });

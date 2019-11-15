@@ -59,6 +59,17 @@ app.get(
   require('./success-mw')
 );
 
+app.get(
+  '/admin/provider/:providerId',
+  require('../../../lib/mw/trace-id-mw'),
+  require('./setup-response-mw'),
+  queryProviderHandlerMW,
+  queryStaffHandlerMW,
+  queryOfferingsHandlerMW,
+  require('./success-mw')
+);
+
+
 app.use(require('../../../lib/mw/error-handling-mw'));
 
 // Start up the server and listen on the provided port

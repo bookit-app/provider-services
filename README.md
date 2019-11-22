@@ -2,6 +2,12 @@
 
 # provider-services
 
+* [Design](#Design)
+* [Data Model](#Data-Model)
+* [REST APIs](#REST-APIs)
+* [Detailed Component Descriptions](#Component-Descriptions)
+    * [Shared lib](#Shared-Lib)
+
 ## Design
 
 This repo contains a set of deployable services to handle BookIt Service Provider Operations. This includes creating and managing service providers, staff members, services, and staff member requests. The repo is designed as a mono-repo to house all services necessary to support a provider services as it has been defined for the BookIt app. Each service is intended to be individually deployed as a standalone microservice to the cloud to be consumed by the client applications.
@@ -10,18 +16,20 @@ This repo contains a set of deployable services to handle BookIt Service Provide
 
 The design is based around how [expressjs](https://expressjs.com) works and hence everything is essentially decomposed down into a setup of middleware. The following describes each component of the diagram in more detail.
 
-### Service Provider Data Model
+## Data Model
 
-### API Descriptions
+## REST APIs
 
 Each service depicted in the design diagram exposes HTTP(s) REST APIs to be consumed by either the client application, other internal Google Cloud Services, or for service to service internal API communication. The requests that are exposes are mentioned below Refer to the [API Gateway Repo](https://github.com/bookit-app/api-gateway) OpenAPI specification for the APIs which are exposes and consumed from the client application.
 
-### Dependencies
+## Dependencies
 
 As these services are all implemented in nodejs npm is used to manage the dependencies. However, as this is a mono-repo and contains several microservice applications that will be deployed as docker containers it has been designed in a away to allow each service to be built into a container containing only the necessary dependencies that it specifically requires. This is done to try and keep the image size to a minimum. Dependencies are managed as follows:
 
 - **Global Dependencies**: There are dependencies that every service leverages. These have been defined in the `package.json` at the root of the project and each service leverages them  as this ensures consistency across the deployments as well as ensures that shared libraries leverage the same versions across all.
 - **Local Dependencies**: These are dependencies specific to an individual service and would only be contained within the deployment. These are managed within the `package.json` file within the services directory under src/service/<service-name>.
+
+## Component Descriptions
 
 ### Shared lib
 

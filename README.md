@@ -1,6 +1,9 @@
 [![Coverage Status](https://coveralls.io/repos/github/bookit-app/provider-services/badge.svg?branch=master)](https://coveralls.io/github/bookit-app/provider-services?branch=master)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/7c29b8b5b8b74764935483aab91973d0)](https://www.codacy.com/gh/bookit-app/provider-services?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=bookit-app/provider-services&amp;utm_campaign=Badge_Grade)
 
 # provider-services
+
+# Navigation
 
 * [Design](#Design)
 * [Data Model](#Data-Model)
@@ -54,4 +57,4 @@ The items within this section make up a set of components (functions, classes, d
 
 - **constants**: Exposes a set of attributes as constants for use across the services.
   - **errors**: Constants represented general error situations and are intended to be used as the basis for errors created into the ServiceError reference
-  - **statusCodes**: This is a reference to an npm modules calls `http-status-codes` which provides contsants for the HTTP Status Codes like 200, 201, 500, etc
+  - **statusCodes**: This is a reference to an npm modules calls `http-status-codes` which provides constants for the HTTP Status Codes like 200, 201, 500, etc

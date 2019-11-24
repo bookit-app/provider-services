@@ -8,10 +8,8 @@
 - [Design](#Design)
 - [Data Model](#Data-Model)
 - [REST APIs](#REST-APIs)
-- [Repo Organization](#Repo-Organization)
-- [Deployment](#Deployment)
+- [Repo Organization](#Repository-Organization)
 - [Code Quality](#Code-Quality)
-- [Security](#Security)
 - Component Descriptions
   - [Shared lib](./src/lib/README.md)
   - [Configuration Service](./src/services/configuration-service/README.md)
@@ -39,27 +37,12 @@ The design is based around how [expressjs](https://expressjs.com) works and henc
 
 Each service depicted in the design diagram exposes HTTP(s) REST APIs to be consumed by either the client application, other internal Google Cloud Services, or for service to service internal API communication. The requests that are exposes are mentioned below Refer to the [API Gateway Repo](https://github.com/bookit-app/api-gateway) OpenAPI specification for the APIs which are exposes and consumed from the client application.
 
-## Repo Organization
+## Repository Organization
 
 As these services are all implemented in nodejs npm is used to manage the dependencies. However, as this is a mono-repo and contains several microservice applications that will be deployed as docker containers it has been designed in a away to allow each service to be built into a container containing only the necessary dependencies that it specifically requires. This is done to try and keep the image size to a minimum. Dependencies are managed as follows:
 
 - **Global Dependencies**: There are dependencies that every service leverages. These have been defined in the `package.json` at the root of the project and each service leverages them as this ensures consistency across the deployments as well as ensures that shared libraries leverage the same versions across all.
 - **Local Dependencies**: These are dependencies specific to an individual service and would only be contained within the deployment. These are managed within the `package.json` file within the services directory under src/service/<service-name>.
-
-## TODO: Deployment
-
-- Cloud Build used for build and deployment
-- Each service it warped into a docker image and pushed to gcr.io
-- Each service contains its own build setup which is triggered in a dedicated build run via the repos parent build
-- The build is broken down into 2 phases
-    - On the opening of a pull request a build is triggered which runs the linting and automated unit tests to ensure the code changes within the PR are quality changes
-    - On merge to the master branch the build/push of the docker images are processed and a new revision is created in Cloud Run to finalize the deployment
-
-## TODO: Security
-
-- No external access without proper IAM roles
-- Access granted via ESP which is enforcing user based authentication
-- Access granted to Specific GCP IAM users as needed like o the account level pubsub user to enable push notifications for messages arriving on topics with subscriptions.
 
 ## TODO: Code Quality
 

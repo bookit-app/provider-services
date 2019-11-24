@@ -44,11 +44,15 @@ As these services are all implemented in nodejs npm is used to manage the depend
 - **Global Dependencies**: There are dependencies that every service leverages. These have been defined in the `package.json` at the root of the project and each service leverages them as this ensures consistency across the deployments as well as ensures that shared libraries leverage the same versions across all.
 - **Local Dependencies**: These are dependencies specific to an individual service and would only be contained within the deployment. These are managed within the `package.json` file within the services directory under src/service/<service-name>.
 
-## TODO: Code Quality
+## Code Quality
 
-- Integration with husky for unit-tests, linting on commit
-- Integration of tests and lint within the build process to ensure everything is working as expected before build/deployment/merge into master branch
-- Integration with [Coveralls](https://coveralls.io/github/bookit-app/provider-services?branch=master) to track unit test code coverage over time to ensure we can tracking well with our implemented unit tests - Also see badge linked at the top of the repo
-- Integration with [Codacy](https://www.codacy.com/gh/bookit-app/provider-services?utm_source=github.com&utm_medium=referral&utm_content=bookit-app/provider-services&utm_campaign=Badge_Grade) which is a code quality tool and provides insights in to overall code quality based on a scoring metric, anaylizes complexity, technical debt, formatting issues and so one. - Also see badge linked at the top of the repo
+The following practices were put in place to ensure high quality code is delivered:
 
+- Integration with husky for verify what is being pushed and committed to github. Husky is a tool that plugs into local git hooks and allows to processing verifications as pre-commit hooks. For the provider-services hooks are in place to ensure for unit-tests pass, code coverage is acceptable, and linting is enforce (code syntax, formatting, etc) on commit
+
+- We have enforced a code review processing within github using the Pull Request process. When pull requests are opened the following occurs:
+    - Integration with [Coveralls](https://coveralls.io/github/bookit-app/provider-services?branch=master) to track unit test code coverage over time to ensure we can tracking well with our implemented unit tests - Also see badge linked at the top of the repo
+    - Integration with [Codacy](https://www.codacy.com/gh/bookit-app/provider-services?utm_source=github.com&utm_medium=referral&utm_content=bookit-app/provider-services&utm_campaign=Badge_Grade) which is a code quality tool and provides insights in to overall code quality based on a scoring metric, analyzes complexity, technical debt, formatting issues and so one. - Also see badge linked at the top of the repo
+    - Build validation is performed where linting, and unit tests are executed agin to ensure everything is still passing
+    - If the above checks do not meet standards set for the project and pass than the pull request cannot be merged into the master branch. This alleviates that we have undesirable code being merged onto the master branch and deployed to the production landscape
 

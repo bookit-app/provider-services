@@ -3,6 +3,8 @@
 
 # provider-services
 
+This repo contains a set of deployable services to handle BookIt Service Provider Operations. This includes creating and managing service providers, staff members, services, and staff member requests. The repo is designed as a mono-repo to house all services necessary to support the functions related to ServiceProviders as it has been defined for the BookIt app. Each service is intended to be individually deployed as a standalone microservice to the cloud to be consumed by the client applications.
+
 ## Content
 
 - [Design](#Design)
@@ -10,6 +12,13 @@
 - [REST APIs](#REST-APIs)
 - [Repo Organization](#Repository-Organization)
 - [Code Quality](#Code-Quality)
+
+## Design
+
+[![design](./docs/images/design.png)](./docs/images/design.png)
+
+The design is based around how [expressjs](https://expressjs.com) works and hence everything is essentially decomposed down into a setup of middleware. For details on the individual components of the diagram refer to the following:
+
 - Component Descriptions
   - [Shared lib](./src/lib/README.md)
   - [Configuration Service](./src/services/configuration-service/README.md)
@@ -27,21 +36,16 @@
   - [Update Service Offering]()
   - [Update Service Provider]()
 
-## Design
-
-This repo contains a set of deployable services to handle BookIt Service Provider Operations. This includes creating and managing service providers, staff members, services, and staff member requests. The repo is designed as a mono-repo to house all services necessary to support a provider services as it has been defined for the BookIt app. Each service is intended to be individually deployed as a standalone microservice to the cloud to be consumed by the client applications.
-
-[![design](./docs/images/design.png)](./docs/images/design.png)
-
-The design is based around how [expressjs](https://expressjs.com) works and hence everything is essentially decomposed down into a setup of middleware. The following describes each component of the diagram in more detail.
-
 ## Data Model
 
 [![data-model](./docs/images/data-model.png)](./docs/images/data-model.png)
 
+The data model supporting the service provider set of services is represented in the diagram above and the collections are stored within Cloud Firestore. All of the services within this repo work with this underlying data model and operate are different parts/subsets of the data depending on the services responsibility. The below provides details related to the purpose of the collection.
+
 - Service Provider Collection: This collection contains documents pertaining to the Service Provider Master Data
-    - Staff sub-collection: This sub-collection under the ServiceProvider collection contains information related to on-boarded staff members for the provider
-    - Offering sub-collection: This sub-collection under the ServiceProvider collection contains the details about the services which the provider is able to make available for their potential clients.
+
+  - Staff sub-collection: This sub-collection under the ServiceProvider collection contains information related to on-boarded staff members for the provider
+  - Offering sub-collection: This sub-collection under the ServiceProvider collection contains the details about the services which the provider is able to make available for their potential clients.
 
 - StaffMembershipRequests Collection
 
@@ -65,8 +69,7 @@ The following practices were put in place to ensure high quality code is deliver
 - Integration with husky for verify what is being pushed and committed to github. Husky is a tool that plugs into local git hooks and allows to processing verifications as pre-commit hooks. For the provider-services hooks are in place to ensure for unit-tests pass, code coverage is acceptable, and linting is enforce (code syntax, formatting, etc) on commit
 
 - We have enforced a code review processing within github using the Pull Request process. When pull requests are opened the following occurs:
-    - Integration with [Coveralls](https://coveralls.io/github/bookit-app/provider-services?branch=master) to track unit test code coverage over time to ensure we can tracking well with our implemented unit tests - Also see badge linked at the top of the repo
-    - Integration with [Codacy](https://www.codacy.com/gh/bookit-app/provider-services?utm_source=github.com&utm_medium=referral&utm_content=bookit-app/provider-services&utm_campaign=Badge_Grade) which is a code quality tool and provides insights in to overall code quality based on a scoring metric, analyzes complexity, technical debt, formatting issues and so one. - Also see badge linked at the top of the repo
-    - Build validation is performed where linting, and unit tests are executed agin to ensure everything is still passing
-    - If the above checks do not meet standards set for the project and pass than the pull request cannot be merged into the master branch. This alleviates that we have undesirable code being merged onto the master branch and deployed to the production landscape
-
+  - Integration with [Coveralls](https://coveralls.io/github/bookit-app/provider-services?branch=master) to track unit test code coverage over time to ensure we can tracking well with our implemented unit tests - Also see badge linked at the top of the repo
+  - Integration with [Codacy](https://www.codacy.com/gh/bookit-app/provider-services?utm_source=github.com&utm_medium=referral&utm_content=bookit-app/provider-services&utm_campaign=Badge_Grade) which is a code quality tool and provides insights in to overall code quality based on a scoring metric, analyzes complexity, technical debt, formatting issues and so one. - Also see badge linked at the top of the repo
+  - Build validation is performed where linting, and unit tests are executed agin to ensure everything is still passing
+  - If the above checks do not meet standards set for the project and pass than the pull request cannot be merged into the master branch. This alleviates that we have undesirable code being merged onto the master branch and deployed to the production landscape

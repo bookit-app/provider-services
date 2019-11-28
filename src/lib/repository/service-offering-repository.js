@@ -4,6 +4,7 @@ const PROVIDER_COLLECTION = require('./service-provider-repository')
   .COLLECTION_NAME;
 const SERVICES_SUBCOLLECTION = 'services';
 const logger = require('../util/logger');
+const { isEmpty } = require('lodash');
 
 class ServiceOfferingRepository {
   constructor(firestore) {
@@ -35,7 +36,7 @@ class ServiceOfferingRepository {
       .doc(providerId)
       .collection(SERVICES_SUBCOLLECTION)
       .add({
-        styleId: service.styleId || 'CUSTOM',
+        styleId: isEmpty(service.styleId) ? 'CUSTOM' : service.styleId,
         description: service.description,
         price: service.price,
         currency: service.currency || 'USD'

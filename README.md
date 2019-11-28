@@ -3,7 +3,7 @@
 
 # provider-services
 
-# Navigation
+## Content
 
 - [Design](#Design)
 - [Data Model](#Data-Model)
@@ -13,7 +13,19 @@
 - Component Descriptions
   - [Shared lib](./src/lib/README.md)
   - [Configuration Service](./src/services/configuration-service/README.md)
-  - [Create Service Offering](#Create-Service-Offering)
+  - [Create Service Offering](./src/services/create-service-offering/README.md)
+  - [Create Service Provider]()
+  - [Delete Service Provider]()
+  - [Offering Notification Processor]()
+  - [Provider Delete Notification Processor]()
+  - [Provider Search]()
+  - [Query Service Provider]()
+  - [Staff Membership Accepted Notification]()
+  - [Staff Membership Request]()
+  - [Staff Membership Request Query]()
+  - [Staff membership Request Update]()
+  - [Update Service Offering]()
+  - [Update Service Provider]()
 
 ## Design
 
@@ -23,11 +35,13 @@ This repo contains a set of deployable services to handle BookIt Service Provide
 
 The design is based around how [expressjs](https://expressjs.com) works and hence everything is essentially decomposed down into a setup of middleware. The following describes each component of the diagram in more detail.
 
-## TODO: Data Model
+## Data Model
 
-- Service Provider Collection
-    - Staff sub-collection - relationship to profile
-    - offering sub-collection
+[![data-model](./docs/images/data-model.png)](./docs/images/data-model.png)
+
+- Service Provider Collection: This collection contains documents pertaining to the Service Provider Master Data
+    - Staff sub-collection: This sub-collection under the ServiceProvider collection contains information related to on-boarded staff members for the provider
+    - Offering sub-collection: This sub-collection under the ServiceProvider collection contains the details about the services which the provider is able to make available for their potential clients.
 
 - StaffMembershipRequests Collection
 

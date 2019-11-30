@@ -66,7 +66,7 @@ As these services are all implemented in nodejs npm is used to manage the depend
 
 The following practices were put in place to ensure high quality code is delivered:
 
-- Integration with husky for verify what is being pushed and committed to github. Husky is a tool that plugs into local git hooks and allows to processing verifications as pre-commit hooks. For the provider-services hooks are in place to ensure for unit-tests pass, code coverage is acceptable, and linting is enforce (code syntax, formatting, etc) on commit
+- Integration with husky inorder to verify what is being pushed and committed to github. Husky is a tool that plugs into local git hooks and we leverage it for processing verifications as pre-commit hooks. For the provider-services hooks are in place to ensure for unit-tests pass, code coverage is acceptable, and linting is enforced (code syntax, formatting, etc) on commit. The settings are defined within the main [package.json](./package.json)
 
 - We have enforced a code review processing within github using the Pull Request process. When pull requests are opened the following occurs:
   - Integration with [Coveralls](https://coveralls.io/github/bookit-app/provider-services?branch=master) to track unit test code coverage over time to ensure we can tracking well with our implemented unit tests - Also see badge linked at the top of the repo

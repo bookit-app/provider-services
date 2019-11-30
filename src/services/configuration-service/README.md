@@ -1,6 +1,8 @@
-# Configuration Service
+# configuration-service
 
 The configuration service provides a means to expose configuration options as they pertain to the Service Provider. The supported configurations built for the Book-App relate to:
+
+## Component Descriptions
 
 - **staffClassification**: This indicates the role that a staff member has at a service provider and would be used to direct appointments to the appropriate members based on the users selection
 - **styles**: Represents the set of services which are globally defined and supported by the book-it app. This is used to enable searching functionalities and to classify non-Custom services provided by the service providers.

@@ -7,6 +7,7 @@ This repo contains a set of deployable services to handle BookIt Service Provide
 
 ## Content
 
+- [High Level Architecture](#High-Level-Architecture)
 - [Design](#Design)
 - [Data Model](#Data-Model)
 - [REST APIs](#REST-APIs)
@@ -15,7 +16,9 @@ This repo contains a set of deployable services to handle BookIt Service Provide
 
 ## High Level Architecture
 
-[![layering](./docs/images/architecture-layering.png)](./docs/images/architecture-layering.png)
+<p align="center">
+<img src="./docs/images/architecture-layering.png">
+</p>
 
 The overall design of the services is based on the layering shown in the above diagram. There is an express server which exposes routes accessible via HTTP. Each route has a set of Business logic attached which are defined as express MW allowing the logic to be re-used where appropriate and decomposed/isolated with clear separation of concerns. Finally there is a data access layer defined as the Repository layer where all interactions with the underlying storage technology is abstracted.
 
@@ -25,14 +28,9 @@ The overall design of the services is based on the layering shown in the above d
 
 The design is based around how [expressjs](https://expressjs.com) works and hence everything is essentially decomposed down into a setup of middleware. Each service is following a layered architecture approach like the following:
 
-
-
-
-
 The following diagram shows the basic flow of execution within the services.
 
 [![basic-sequence](./docs/images/basic-sequence.png)](./docs/images/basic-sequence.png)
-
 
 For details on the individual components of the diagram refer to the following:
 

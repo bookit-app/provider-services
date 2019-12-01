@@ -61,7 +61,7 @@ app.use(bodyParser.json());
 
 // Generate Route with necessary middleware
 app.post(
-  '/',
+  '/staffMembershipRequest',
   require('../../../lib/mw/user-mw'),
   require('../../../lib/mw/trace-id-mw'),
   validateMW,

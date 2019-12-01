@@ -23,7 +23,7 @@ app.use(bodyParser.json());
 
 // Generate Route with necessary middleware
 app.get(
-  '/',
+  '/staffMembershipRequest',
   require('../../../lib/mw/user-mw'),
   require('../../../lib/mw/trace-id-mw'),
   queryRequestsHandlerMW,

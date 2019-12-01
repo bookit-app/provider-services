@@ -30,7 +30,7 @@ When a new service provider is created it is necessary to perform additional tas
 
 The below describes what is happening as shown in the diagram
 
-1. User sends and HTTP(s) POST request to create a new service offering.
+1. User sends and HTTP(s) POST request to create a new service provider.
 2. When the service determines that the data is all valid it allows the creation of the provider into the ServiceProvider collection on cloud firestore.
 3. On successful creation of the document the create-service-provider service responds to the user with a 201 HTTP Created response code.
 4. The provider-create-notification-publisher function is registered already within the infrastructure to the Create firestore event trigger for the ServiceProvider collection. When the data is saved the trigger is automatically fired behind the scenes. This is not within the same roundtrip as the user request.

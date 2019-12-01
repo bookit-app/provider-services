@@ -36,7 +36,7 @@ For details on the individual services and components of the diagram refer to th
   - [Shared lib](./src/lib/README.md)
   - [Configuration Service](./src/services/configuration-service/README.md)
   - [Create Service Offering](./src/services/create-service-offering/README.md)
-  - [Create Service Provider]()
+  - [Create Service Provider](./src/services/create-service-provider/README.md)
   - [Delete Service Provider]()
   - [Offering Notification Processor]()
   - [Provider Delete Notification Processor]()

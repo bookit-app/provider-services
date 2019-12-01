@@ -89,6 +89,36 @@ class StaffMemberRepository {
       return staffMember;
     });
   }
+
+  /**
+   * Delete the entire collection of staff members for
+   * the provided provider Id
+   *
+   * @param {*} providerId
+   * @memberof StaffMemberRepository
+   */
+  async deleteAllForProvider(providerId) {
+    const querySnapshot = await this.firestore
+      .collection(PROVIDER_COLLECTION)
+      .doc(providerId)
+      .collection(STAFF_SUBCOLLECTION)
+      .get();
+
+    if (querySnapshot.size == 0) {
+      return;
+    }
+
+    logger.info(
+      `Deleting ${querySnapshot.size} staff members for provider ${providerId}`
+    );
+
+    const batch = this.firestore.batch();
+    querySnapshot.forEach(document => {
+      batch.delete(document.ref);
+    });
+
+    await batch.commit();
+  }
 }
 
 module.exports = StaffMemberRepository;

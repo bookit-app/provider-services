@@ -6,15 +6,22 @@ const bodyParser = require('body-parser');
 // These will be lazily loaded when needed.
 // Per Cloud Run best practice we should lazily load
 // references https://cloud.google.com/run/docs/tips
-let providerRepo, deleteMW;
+let offeringRepo, staffRepo, deleteMW;
 
 function deleteHandlerMW(req, res, next) {
-  providerRepo =
-    providerRepo ||
+  offeringRepo =
+    offeringRepo ||
     require('../../../lib/repository/service-offering-repository')
       .serviceOfferingRepositoryInstance;
+
+  staffRepo =
+    staffRepo ||
+    require('../../../lib/repository/staff-member-repository')
+      .staffMemberRepositoryInstance;
+
   deleteMW =
-    deleteMW || require('./delete-provider-dependencies-mw')(providerRepo);
+    deleteMW ||
+    require('./delete-provider-dependencies-mw')([staffRepo, offeringRepo]);
   return deleteMW(req, res, next);
 }
 

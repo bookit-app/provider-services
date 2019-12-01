@@ -7,7 +7,7 @@ const repoStub = {
   deleteAllForProvider: stub()
 };
 const mw = require('../../../src/services/provider-delete-notification-processor/src/delete-provider-dependencies-mw')(
-  repoStub
+  [repoStub]
 );
 
 const req = {

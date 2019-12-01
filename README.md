@@ -26,13 +26,11 @@ The overall design of the services is based on the layering shown in the above d
 
 [![design](./docs/images/design.png)](./docs/images/design.png)
 
-The design is based around how [expressjs](https://expressjs.com) works and hence everything is essentially decomposed down into a setup of middleware. Each service is following a layered architecture approach like the following:
-
-The following diagram shows the basic flow of execution within the services.
+The design is based around how [expressjs](https://expressjs.com) works and hence everything is essentially decomposed down into a setup of middleware. The following diagram shows the basic flow of execution within the services.
 
 [![basic-sequence](./docs/images/basic-sequence.png)](./docs/images/basic-sequence.png)
 
-For details on the individual components of the diagram refer to the following:
+For details on the individual services and components of the diagram refer to the following:
 
 - Component Descriptions
   - [Shared lib](./src/lib/README.md)

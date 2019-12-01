@@ -6,6 +6,14 @@ The happy path sequence for this services request is seen in the below image. It
 
 [![create-service-offering-sequence](../../../docs/images/create-service-offering-sequence.png)](../../../docs/images/create-service-offering-sequence.png)
 
+## API Description
+
+This service exposes and HTTP(s) POST API which enables the creation of service offerings.
+
+- [Payload](./src/payload-validations.js): This defines the expected payload for this service
+- [Route](./src/index.js): The route which is directly exposed by this service is defined when the express POST route is registered.
+- [API Gateway Documentation](https://endpointsportal.bookit-app-260021.cloud.goog/docs/esp-fjwomrdjca-ue.a.run.app/0/routes/provider/%7BproviderId%7D/services/post): The API tools provides the documentation for the API as it is exposed via Cloud Endpoints to the outside world. 
+
 ## Component Descriptions
 
 - [create-service-offering-mw](./src/create-service-offering-mw.js): This is the main MW step configured for this service within the chain and it is responsible to take the payload provided by the user and map it to an object which is acceptable for the service offering repository to commit to the database.

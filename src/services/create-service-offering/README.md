@@ -8,13 +8,15 @@ The happy path sequence for this services request is seen in the below image. It
 
 ## Component Descriptions
 
-- [create-service-offering-mw](./src/create-service-offering-mw.js): This is the main MW step configured for this service within the chain and it is responsible to taking the payload provided by the user and mapping it to an object which is acceptable for the service offering repository to commit to the database.
-    - Error Scenarios:
-        - Update Failed Error: This is raised what an exception is generated from the repository. This would occur if there are failures with the creation of the service offering.
+- [create-service-offering-mw](./src/create-service-offering-mw.js): This is the main MW step configured for this service within the chain and it is responsible to take the payload provided by the user and map it to an object which is acceptable for the service offering repository to commit to the database.
+
+  - Error Scenarios:
+    - Update Failed Error: This is raised when an exception is generated from the repository. This would occur if there are failures with the creation of the service offering.
 
 - [payload-validations](./src/payload-validations.js): This defines the schema which is expected for the body of the payload and some check functions to ensure the provided data is appropriate.
-    - Error Scenarios:
-        - Malformed Error: When the provided payload is not valid per the schema defined.
+
+  - Error Scenarios:
+    - Malformed Error: When the provided payload is not valid per the schema defined.
 
 - [success-mw](./src/success-mw.js): If all goes well within the process and this MW step is reached it is just populating a proper HTTP response code to the caller.
 
@@ -29,7 +31,7 @@ The information related to service offerings is necessary to enabling the define
 The below describes what is happening as shown in the diagram
 
 1. User sends and HTTP(s) POST request to create a new service offering.
-2. When the service determines that the data is all valid it allows the creation of the offering into the offering collection on cloud firestore. 
+2. When the service determines that the data is all valid it allows the creation of the offering into the offering collection on cloud firestore.
 3. On successful creation of the document the create-service-offering service responds to the user with a 201 HTTP Created response code.
 4. The service-offering-notification-publisher function is registered already within the infrastructure to the Create and Update firestore event triggers therefore when the data is saved these triggers are automatically fired behind the scenes. This is not within the same roundtrip as the user request.
 5. The service-offering-notification-publisher receives the delta event message and generates the payload for the pubsub notification onto topic service-change-notification
@@ -42,6 +44,7 @@ Once the above process is completed the provider details will be returned within
 
 The below repositories contain the code base and documentation for those additional components mentioned within the data flow diagram above.
 
-- [Offering Notification Processor](https://github.com/bookit-app/provider-services/tree/master/src/services/offering-notification-processor)
 - [Service Offering Notification Publisher](https://github.com/bookit-app/service-offering-notification-publisher)
 - [Service Provider Search](https://github.com/bookit-app/provider-services/tree/master/src/services/provider-search)
+- Subscribers:
+  - [Offering Notification Processor](https://github.com/bookit-app/provider-services/tree/master/src/services/offering-notification-processor)

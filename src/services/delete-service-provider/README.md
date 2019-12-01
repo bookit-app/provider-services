@@ -8,7 +8,7 @@ The happy path sequence for this services DELETE request is seen in the below im
 
 ## Component Descriptions
 
-- [delete-service-provider-mw](./src/delete-service-provider-mw.js): This is the main MW step configured for this service within the chain and it is responsible to take the payload provided by the user and map it to an object which is acceptable for the service provider repository to commit to the database.
+- [delete-provider-mw](./src/delete-provider-mw.js): This is the main MW step configured for this service within the chain and it is responsible to take the payload provided by the user and map it to an object which is acceptable for the service provider repository to commit to the database.
 
   - Error Scenarios:
     - Update Failed Error: This is raised when an exception is generated from the repository. This would occur if there are failures with the creation of the service provider.

@@ -39,7 +39,7 @@ For details on the individual services and components of the diagram refer to th
   - [Create Service Provider](./src/services/create-service-provider/README.md)
   - [Delete Service Provider](./src/services/delete-service-provider/README.md)
   - [Offering Notification Processor](./src/services/offering-notification-processor/README.md)
-  - [Provider Delete Notification Processor]()
+  - [Provider Delete Notification Processor](./src/services/provider-delete-notification-processor/README.md)
   - [Provider Search]()
   - [Query Service Provider]()
   - [Staff Membership Accepted Notification]()

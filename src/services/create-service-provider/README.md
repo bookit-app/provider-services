@@ -8,7 +8,7 @@ The happy path sequence for this services POST request is seen in the below imag
 
 ## API Description
 
-This service exposes and HTTP(s) POST API which enables the creation of service proviers.
+This service exposes and HTTP(s) POST API which enables the creation of service providers.
 
 - [Payload](./src/payload-validations.js): This defines the expected payload for this service
 - [Route](./src/index.js): The route which is directly exposed by this service is defined when the express POST route is registered.

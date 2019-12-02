@@ -41,7 +41,7 @@ For details on the individual services and components of the diagram refer to th
   - [Offering Notification Processor](./src/services/offering-notification-processor/README.md)
   - [Provider Delete Notification Processor](./src/services/provider-delete-notification-processor/README.md)
   - [Provider Search](./src/services/provider-search/README.md)
-  - [Query Service Provider]()
+  - [Query Service Provider](./src/services/query-service-provider/README.md)
   - [Staff Membership Accepted Notification]()
   - [Staff Membership Request]()
   - [Staff Membership Request Query]()

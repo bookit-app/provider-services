@@ -38,8 +38,7 @@ class StaffMemberRepository {
       .set(
         {
           email: staffMember.email,
-          name: staffMember.name,
-          staffMemberUid: staffMember.staffMemberUid
+          name: staffMember.name
         },
         { merge: true }
       );

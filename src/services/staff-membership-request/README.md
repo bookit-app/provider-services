@@ -1,6 +1,6 @@
 # staff-membership-request
 
-The staff membership request service provides enables the owner user of a service provider to make a request for a user (existing bookit user or not) to become part of the staff associated with the service provider.
+The staff membership request service provides enables the owner user of a service provider to make a request for a user (existing bookit user or not) to become part of the staff associated with the service provider. When a membership request is created it is created into the StaffMembershipRequest collection.
 
 The happy path sequence for this services POST request is seen in the below image. It is possible for the middleware or repositories to generate runtime exceptions in which case these are automatically captured and propagated to the user by the default configured express error MW handler. The possible error scenarios are mentioned in the component descriptions and would lead to a stop within the processing flow.
 

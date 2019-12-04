@@ -43,3 +43,20 @@ This service exposes and HTTP(s) POST API which enables the creation of service 
         - Forbidden: If the current user is not linked with the request they are not allowed to modify it
 
 - [success-mw](./src/success-mw.js): If all goes well within the process and this MW step is reached it is just populating a proper HTTP response code to the caller.
+
+## Special Processing
+
+Changes to staff membership requests has some special processing which occurs after the information is created within the StaffMembershipRequests collection. The flow is depicted in the flow diagram below.
+
+[![update-staff-membership-request-special-processing](../../../docs/images/update-staff-membership-request-processing.png)](../../../docs/images/update-staff-membership-request-processing.png)
+
+When a staff membership request is changed cloud firestore will trigger notifications based on the UPDATE trigger. This is processed by the staff-request-accepted-notification-publisher. So that the change can be evaluated to determine if a new staff member should be associated with the ServiceProvider.
+
+### Additional Github Repositories
+
+The below repositories contain the code base and documentation for those additional components mentioned within the data flow diagram above.
+
+- [staff-request-accepted-notification-publisher](https://github.com/bookit-app/staff-request-accepted-notification-publisher)
+
+- Subscribers:
+  - [staff-membership-accepted-notification-processor](../staff-membership-accepted-notification-processor/README.md)

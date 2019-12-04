@@ -20,7 +20,7 @@ module.exports = repository => async (req, res, next) => {
 
     next();
   } catch (err) {
-    const error = clone(errors.updateFailed);
+    const error = clone(errors.systemError);
     error.message = err.message;
     next(new ServiceError(error));
   }

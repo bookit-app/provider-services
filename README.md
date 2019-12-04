@@ -42,12 +42,12 @@ For details on the individual services and components of the diagram refer to th
   - [Provider Delete Notification Processor](./src/services/provider-delete-notification-processor/README.md)
   - [Provider Search](./src/services/provider-search/README.md)
   - [Query Service Provider](./src/services/query-service-provider/README.md)
-  - [Staff Membership Accepted Notification]()
-  - [Staff Membership Request]()
-  - [Staff Membership Request Query]()
-  - [Staff membership Request Update]()
-  - [Update Service Offering]()
-  - [Update Service Provider]()
+  - [Staff Membership Accepted Notification](./src/services/staff-membership-accepted-notification-processor/README.md)
+  - [Staff Membership Request](./src/services/staff-membership-request/README.md)
+  - [Staff Membership Request Query](./src/services/staff-membership-request-query/README.md)
+  - [Staff membership Request Update](./src/services/staff-membership-request-update/README.md)
+  - [Update Service Offering](./src/services/update-service-offering/README.md)
+  - [Update Service Provider](./src/services/update-service-provider/README.md)
 
 ## Data Model
 

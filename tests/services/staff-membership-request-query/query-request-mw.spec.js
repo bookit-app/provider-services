@@ -52,7 +52,7 @@ describe('staff-membership-request-query query-request-mw unit tests', () => {
     expect(next.called).to.be.true;
 
     const { errorCode, statusCode } = next.args[0][0];
-    expect(errorCode).to.equal(errors.updateFailed.errorCode);
-    expect(statusCode).to.equal(errors.updateFailed.statusCode);
+    expect(errorCode).to.equal(errors.systemError.errorCode);
+    expect(statusCode).to.equal(errors.systemError.statusCode);
   });
 });

@@ -46,11 +46,11 @@ This service exposes and HTTP(s) POST API which enables the creation of service 
 
 ## Special Processing
 
-Changes to staff membership requests has some special processing which occurs after the information is created within the StaffMembershipRequests collection. The flow is depicted in the flow diagram below.
+Changes to staff membership requests has some special processing which occurs after the information is updated within the StaffMembershipRequests collection. The flow is depicted in the flow diagram below.
 
 [![update-staff-membership-request-special-processing](../../../docs/images/update-staff-membership-request-processing.png)](../../../docs/images/update-staff-membership-request-processing.png)
 
-When a staff membership request is changed cloud firestore will trigger notifications based on the UPDATE trigger. This is processed by the staff-request-accepted-notification-publisher. So that the change can be evaluated to determine if a new staff member should be associated with the ServiceProvider.
+When a staff membership request is changed cloud firestore will trigger notifications based on the UPDATE trigger so that registered functions and handle the necessary background operations.
 
 ### Additional Github Repositories
 

@@ -14,7 +14,6 @@ The happy path sequence for this services POST request is seen in the below imag
 
 This service exposes and HTTP(s) POST API which enables the processing of the events published onto the service-change-notification pubsub topic. This service does not expose any routes publicly outside of GCP and the client cannot call this function.
 
-- [Payload](./src/payload-validations.js): This defines the expected payload for this service
 - [Route](./src/index.js): The route which is directly exposed by this service is defined when the express POST route is registered.
 
 ## Component Descriptions

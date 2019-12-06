@@ -37,7 +37,7 @@ This service exposes and HTTP(s) POST API which enables the creation of service 
   - Error Scenarios:
     - Update Failed: This is raised if there are issues with the update to Cloud Firestore
 
-- [user-check-mw](./src/user-check-mw/js): This MW verifies that the Staff Membership Request is linked to the currently logged in user.
+- [user-check-mw](./src/user-check-mw.js): This MW verifies that the Staff Membership Request is linked to the currently logged in user.
 
     - Error Scenarios:
         - Forbidden: If the current user is not linked with the request they are not allowed to modify it

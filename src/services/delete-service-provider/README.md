@@ -10,9 +10,8 @@ The happy path sequence for this services DELETE request is seen in the below im
 
 This service exposes and HTTP(s) POST API which enables the creation of service providers.
 
-- [Payload](./src/payload-validations.js): This defines the expected payload for this service
-- [Route](./src/index.js): The route which is directly exposed by this service is defined when the express POST route is registered.
-- [API Gateway Documentation](https://endpointsportal.bookit-app-260021.cloud.goog/docs/esp-fjwomrdjca-ue.a.run.app/0/routes/provider/post): The API tools provides the documentation for the API as it is exposed via Cloud Endpoints to the outside world. 
+- [Route](./src/index.js): The route which is directly exposed by this service is defined when the express DELETE route is registered.
+- [API Gateway Documentation](https://endpointsportal.bookit-app-260021.cloud.goog/docs/esp-fjwomrdjca-ue.a.run.app/0/routes/provider/%7BproviderId%7D/delete): The API tools provides the documentation for the API as it is exposed via Cloud Endpoints to the outside world. 
 
 ## Component Descriptions
 
@@ -46,6 +45,5 @@ The below repositories contain the code base and documentation for those additio
 
 - [Provider Delete Notification Publisher](https://github.com/bookit-app/provider-delete-notification-publisher)
 - Subscribers:
-  - [Profile Services: Provider Delete Notification Processor](https://github.com/bookit-app/profile-services/tree/master/src/services/provider-delete-notification-processor)
-  - [Provider Services: Provider Delete Notification Processor](https://github.com/bookit-app/provider-services/tree/master/src/services/provider-delete-notification-processor)
-  - [Calender Services: Provider Delete Notification Processor](https://github.com/bookit-app/calender-services/tree/master/src/services/provider-delete-notification-processor)
+  - [Profile Services: Provider Delete Notification Processor](https://github.com/bookit-app/profile-services)
+  - [Provider Services: Provider Delete Notification Processor](../provider-delete-notification-processor/README.md)

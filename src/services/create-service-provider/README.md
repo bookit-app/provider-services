@@ -51,4 +51,4 @@ The below repositories contain the code base and documentation for those additio
 
 - [Provider Create Notification Publisher](https://github.com/bookit-app/provider-create-notification-publisher)
 - Subscribers:
-  - [Provider Create Notification Processor](https://github.com/bookit-app/profile-services/tree/master/src/services/provider-create-notification-processor)
+  - [Profile Services: Provider Create Notification Processor](https://github.com/bookit-app/profile-services)

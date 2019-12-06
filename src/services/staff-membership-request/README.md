@@ -16,7 +16,7 @@ This service exposes and HTTP(s) POST API which enables the creation of service 
 
 ## Component Descriptions
 
-- [query-existing-staff](./src/query-existing-staff-mw.js): This MW step validates that the email provided with the request is not already associated with a staff member of the service provider linked with the currently logged in user.
+- [query-existing-staff](./src/query-existing-staff.js): This MW step validates that the email provided with the request is not already associated with a staff member of the service provider linked with the currently logged in user.
 
   - Error Scenarios:
     - Malformed Request Error: This is raised if there already exists a staff member with the provided email

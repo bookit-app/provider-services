@@ -11,9 +11,8 @@ The happy path sequence for this services POST request is seen in the below imag
 
 ## API Description
 
-This service exposes and HTTP(s) POST API which enables the creation of service proviers.
+This service exposes and HTTP(s) GET API which enables the retrieval of configuration related to service providers.
 
-- [Payload](./src/payload-validations.js): This defines the expected payload for this service
 - [Route](./src/index.js): The route which is directly exposed by this service is defined when the express POST route is registered.
 - [StaffClassification: API Gateway Documentation](https://endpointsportal.bookit-app-260021.cloud.goog/docs/esp-fjwomrdjca-ue.a.run.app/0/routes/configuration/staffClassification/get): The API tools provides the documentation for the API as it is exposed via Cloud Endpoints to the outside world. 
 - [Styles: API Gateway Documentation](https://endpointsportal.bookit-app-260021.cloud.goog/docs/esp-fjwomrdjca-ue.a.run.app/0/routes/configuration/styles/get): The API tools provides the documentation for the API as it is exposed via Cloud Endpoints to the outside world. 

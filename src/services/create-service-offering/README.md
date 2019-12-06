@@ -53,6 +53,6 @@ Once the above process is completed the provider details will be returned within
 The below repositories contain the code base and documentation for those additional components mentioned within the data flow diagram above.
 
 - [Service Offering Notification Publisher](https://github.com/bookit-app/service-offering-notification-publisher)
-- [Service Provider Search](https://github.com/bookit-app/provider-services/tree/master/src/services/provider-search)
+- [Service Provider Search](../provider-search/README.md)
 - Subscribers:
-  - [Offering Notification Processor](https://github.com/bookit-app/provider-services/tree/master/src/services/offering-notification-processor)
+  - [Offering Notification Processor](../offering-notification-processor/README.md)
